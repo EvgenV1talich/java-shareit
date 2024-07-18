@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.service.user;
+package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.user.User;
