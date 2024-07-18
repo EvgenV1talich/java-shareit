@@ -1,12 +1,12 @@
-package ru.practicum.shareit.user.dao;
+package ru.practicum.shareit.user.service.user;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.User;
 
 import java.util.List;
 
-@Repository
-public interface UserDao {
+@Service
+public interface UserService {
 
     void create(User user);
 
@@ -17,6 +17,5 @@ public interface UserDao {
     void delete(Integer userId);
 
     List<User> getAll();
-
 
 }
