@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dao;
 
 import org.springframework.http.HttpStatusCode;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -13,6 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+@Repository
 public class ItemInMemoryDao implements ItemDao {
 
     private final Set<Integer> indexes = new TreeSet<>();

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.dao;
 
 import org.springframework.http.HttpStatusCode;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.User;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+@Repository
 public class UserInMemoryDao implements UserDao {
 
     private final Set<Integer> indexes = new TreeSet<>();
