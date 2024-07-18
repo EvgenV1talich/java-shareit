@@ -25,7 +25,9 @@ public class ItemInMemoryDao implements ItemDao {
 
     @Override
     public void create(Item item) {
+        checkIndex(item.getId());
         items.put(item.getId(), item);
+        indexes.add(item.getId());
     }
 
     @Override
