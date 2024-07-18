@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.dao;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
@@ -24,9 +26,9 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public void create(Item item) {
+    public void create(ItemDto item) {
         checkIndex(item.getId());
-        items.put(item.getId(), item);
+        items.put(item.getId(), ItemMapper.dtoToItem(item));
         indexes.add(item.getId());
     }
 
@@ -37,9 +39,9 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public Item update(Item item) {
+    public Item update(ItemDto item) {
         checkIndex(item.getId());
-        items.replace(item.getId(), item);
+        items.replace(item.getId(), ItemMapper.dtoToItem(item));
         return items.get(item.getId());
     }
 
@@ -50,15 +52,17 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public List<Item> readAll() {
-        return new ArrayList<>(items.values());
+    public List<ItemDto> readAll() {
+        return items.values().stream()
+                .map(ItemMapper::itemToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Item> readByUser(Integer userId) {
+    public List<ItemDto> readByUser(Integer userId) {
         List<Item> userItems = new ArrayList<>();
         return items.values().stream()
-                .filter(item -> item.getOwner().getId() == userId)
+                .filter(item -> item.getOwner().getId() == userId).map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
 

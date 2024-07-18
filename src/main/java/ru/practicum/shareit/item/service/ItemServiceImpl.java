@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.item.dao.ItemDao;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemDao itemDao;
     @Override
-    public void create(Item item) {
+    public void create(ItemDto item) {
         itemDao.create(item);
     }
 
@@ -21,7 +22,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item update(Item item) {
+    public Item update(ItemDto item) {
         return itemDao.update(item);
     }
 
@@ -31,12 +32,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> readAll() {
+    public List<ItemDto> readAll() {
         return itemDao.readAll();
     }
 
     @Override
-    public List<Item> readByUser(Integer userId) {
+    public List<ItemDto> readByUser(Integer userId) {
         return itemDao.readByUser(userId);
     }
 }
