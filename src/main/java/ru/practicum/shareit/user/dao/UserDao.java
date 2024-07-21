@@ -8,15 +8,17 @@ import java.util.List;
 @Repository
 public interface UserDao {
 
-    void create(User user);
+    User create(User user);
 
     User read(Integer userId);
 
-    void update(User user);
+    User update(User user);
 
     void delete(Integer userId);
 
     List<User> getAll();
+
+    boolean checkEmail(String email);
 
 
 }

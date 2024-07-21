@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Repository
@@ -17,17 +18,24 @@ public class UserInMemoryDao implements UserDao {
     private final Set<Integer> indexes = new TreeSet<>();
     private Integer lastAddedIndex;
 
+    private List<String> emails = new ArrayList<>();
+
     private final HashMap<Integer, User> users = new HashMap<>();
 
     public UserInMemoryDao() {
         lastAddedIndex = 0;
         indexes.add(lastAddedIndex);
+
     }
 
     @Override
-    public void create(User user) {
-        checkIndex(user.getId());
+    public User create(User user) {
+        if (user.getId() == null || !indexes.contains(user.getId())) {
+            user.setId(getNewIndex());
+        }
         users.put(user.getId(), user);
+        emails.add(user.getEmail());
+        return user;
     }
 
     @Override
@@ -37,9 +45,10 @@ public class UserInMemoryDao implements UserDao {
     }
 
     @Override
-    public void update(User user) {
+    public User update(User user) {
         checkIndex(user.getId());
         users.replace(user.getId(), user);
+        return user;
     }
 
     @Override
@@ -51,6 +60,11 @@ public class UserInMemoryDao implements UserDao {
     @Override
     public List<User> getAll() {
         return new ArrayList<>(users.values());
+    }
+
+    @Override
+    public boolean checkEmail(String email) {
+        return emails.contains(email);
     }
 
     private void checkIndex(int newIndex) {

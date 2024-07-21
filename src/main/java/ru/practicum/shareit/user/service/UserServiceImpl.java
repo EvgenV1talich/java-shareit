@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserDao;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 
 import java.util.List;
 
@@ -13,8 +15,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     @Override
-    public void create(User user) {
-        userDao.create(user);
+    public User create(UserDto user) {
+        return userDao.create(UserMapper.dtotoUser(user));
     }
 
     @Override
@@ -23,8 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(User user) {
-        userDao.update(user);
+    public User update(UserDto user) {
+        return userDao.update(UserMapper.dtotoUser(user));
     }
 
     @Override

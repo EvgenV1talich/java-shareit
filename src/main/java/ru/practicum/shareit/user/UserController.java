@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 /**
@@ -21,8 +23,8 @@ public class UserController {
     private final UserService service;
 
     @PostMapping
-    public void createUser(User user) {
-        service.create(user);
+    public User createUser(@RequestBody UserDto user) {
+        return service.create(user);
     }
 
     @GetMapping("/{id}")
@@ -31,7 +33,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public void updateUser(User user) {
+    public void updateUser(UserDto user) {
         service.update(user);
     }
 
