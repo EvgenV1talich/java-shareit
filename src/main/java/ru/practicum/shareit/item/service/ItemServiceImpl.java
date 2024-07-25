@@ -1,13 +1,16 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dao.UserDao;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,8 +31,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto update(Integer id, ItemDto item) {
-        return ItemMapper.itemToDto(itemDao.update(id, ItemMapper.dtoToItem(item)));
+    public ItemDto update(Integer id, ItemDto item, Integer requestUserId) {
+        if (!Objects.equals(id, requestUserId)) {
+            throw new ResponseStatusException(HttpStatus.valueOf(403));
+        }
+        return ItemMapper.itemToDto(itemDao.update(id, ItemMapper.dtoToItem(item), requestUserId));
     }
 
     @Override

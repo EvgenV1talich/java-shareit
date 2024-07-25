@@ -11,7 +11,7 @@ public interface ItemService {
 
     ItemDto read(Integer id);
 
-    ItemDto update(Integer id, ItemDto item);
+    ItemDto update(Integer id, ItemDto item, Integer userId);
 
     void delete(Integer id);
 

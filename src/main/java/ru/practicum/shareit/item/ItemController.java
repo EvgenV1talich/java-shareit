@@ -31,11 +31,13 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@PathVariable int itemId, @RequestBody ItemDto itemDto) {
-        return service.update(itemId, itemDto);
+    public ItemDto updateItem(@PathVariable Integer itemId,
+                              @RequestBody ItemDto itemDto,
+                              @RequestHeader(value = "X-Sharer-User-Id") Integer requestUserId) {
+        return service.update(itemId, itemDto, requestUserId);
     }
 
-    @GetMapping("/itemId")
+    @GetMapping("/{itemId}")
     public ItemDto getItem(@PathVariable int itemId) {
         return service.read(itemId);
     }

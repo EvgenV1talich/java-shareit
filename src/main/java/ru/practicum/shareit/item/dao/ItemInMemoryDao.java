@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Repository
 public class ItemInMemoryDao implements ItemDao {
@@ -33,9 +34,9 @@ public class ItemInMemoryDao implements ItemDao {
     @Override
     public Item create(Item item, Integer ownerId) {
         if (item.getId() == null || !indexes.contains(item.getId())) {
-            item.setId(getNewIndex());
             item.setAvailable(true);
             setOwner(item, ownerId);
+            item.setId(getNewIndex());
         }
         items.put(item.getId(), item);
         return item;
@@ -49,10 +50,24 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public Item update(Integer id, Item item) {
-        checkIndex(id);
+    public Item update(Integer id, Item item, Integer requestUserId) {
+        boolean isNewId = item.getId() != null;
+        boolean isNewName = item.getName() != null;
+        boolean isNewDescription = item.getDescription() != null;
+        boolean isNewAvailable = item.getAvailable() != null;
+
+        if (isNewName) {
+            items.get(id).setName(item.getName());
+        }
+        if (isNewDescription) {
+            items.get(id).setDescription(item.getDescription());
+        }
+        if (isNewAvailable) {
+            items.get(id).setAvailable(item.getAvailable());
+        }
+        items.get(id).setOwner(userDao.read(requestUserId));
         items.replace(item.getId(), item);
-        return items.get(item.getId());
+        return items.get(id);
     }
 
     @Override
@@ -68,12 +83,15 @@ public class ItemInMemoryDao implements ItemDao {
 
     @Override
     public List<Item> readByUser(Integer userId) {
-        List<Item> userItems = new ArrayList<>();
-        return new ArrayList<>(items.values());
+        return items.values().stream()
+                .filter(item -> item.getOwner()
+                        .getId()
+                        .equals(userId))
+                .collect(Collectors.toList());
     }
 
     private void checkIndex(Integer newIndex) {
-        if (indexes.contains(newIndex)) {
+        if (!indexes.contains(newIndex)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Item not found!");
         }
     }
