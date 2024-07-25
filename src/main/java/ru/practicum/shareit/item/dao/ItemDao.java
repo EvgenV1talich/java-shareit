@@ -20,4 +20,6 @@ public interface ItemDao {
 
     List<Item> readByUser(Integer userId);
 
+    List<Item> searchItems(String request);
+
 }

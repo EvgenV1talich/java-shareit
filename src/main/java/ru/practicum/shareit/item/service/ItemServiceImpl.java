@@ -56,4 +56,12 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ItemDto> searchItems(String request) {
+        String formatRequest = request.toLowerCase();
+        return itemDao.searchItems(request).stream()
+                .map(ItemMapper::itemToDto)
+                .collect(Collectors.toList());
+    }
 }

@@ -19,4 +19,6 @@ public interface ItemService {
 
     List<ItemDto> readByUser(Integer userId);
 
+    List<ItemDto> searchItems(String request);
+
 }

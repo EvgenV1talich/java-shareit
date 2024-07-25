@@ -51,7 +51,6 @@ public class ItemInMemoryDao implements ItemDao {
 
     @Override
     public Item update(Integer id, Item item, Integer requestUserId) {
-        boolean isNewId = item.getId() != null;
         boolean isNewName = item.getName() != null;
         boolean isNewDescription = item.getDescription() != null;
         boolean isNewAvailable = item.getAvailable() != null;
@@ -62,6 +61,7 @@ public class ItemInMemoryDao implements ItemDao {
         if (isNewDescription) {
             items.get(id).setDescription(item.getDescription());
         }
+        //TODO item update set unavailable test
         if (isNewAvailable) {
             items.get(id).setAvailable(item.getAvailable());
         }
@@ -88,6 +88,24 @@ public class ItemInMemoryDao implements ItemDao {
                         .getId()
                         .equals(userId))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> searchItems(String request) {
+        List<Item> availableItems = items.values().stream().filter(Item::getAvailable).toList();
+
+        return availableItems.stream()
+                .filter(item -> item.getName().toLowerCase().contains(request.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(request.toLowerCase()))
+                .collect(Collectors.toList());
+//        List<Item> necessaryItems = new ArrayList<>();
+//        for (Item item : availableItems) {
+//            if (item.getName().toLowerCase().contains(request.toLowerCase())
+//                    || item.getDescription().toLowerCase().contains(request.toLowerCase())) {
+//                necessaryItems.add(item);
+//            }
+//        }
+//        return necessaryItems;
     }
 
     private void checkIndex(Integer newIndex) {
