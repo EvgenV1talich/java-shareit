@@ -16,10 +16,14 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+
     @Override
     public User create(UserDto user) {
         if (userDao.checkEmail(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.valueOf(409), "Такой e-mail уже используется!");
+        }
+        if (user.getEmail() == null) {
+            throw new ResponseStatusException(HttpStatus.valueOf(400));
         }
         return userDao.create(UserMapper.dtotoUser(user));
     }
@@ -30,8 +34,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(UserDto user) {
-        return userDao.update(UserMapper.dtotoUser(user));
+    public User update(UserDto user, Integer id) {
+        return userDao.update(UserMapper.dtotoUser(user), id);
     }
 
     @Override

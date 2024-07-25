@@ -13,7 +13,7 @@ public interface UserService {
 
     User read(Integer userId);
 
-    User update(UserDto user);
+    User update(UserDto user, Integer id);
 
     void delete(Integer userId);
 

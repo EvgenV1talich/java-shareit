@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.dao;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -9,16 +8,16 @@ import java.util.List;
 @Repository
 public interface ItemDao {
 
-    void create(ItemDto item);
+    Item create(Item item, Integer ownerId);
 
     Item read(Integer id);
 
-    Item update(ItemDto item);
+    Item update(Integer id, Item item);
 
     void delete(Integer id);
 
-    List<ItemDto> readAll();
+    List<Item> readAll();
 
-    List<ItemDto> readByUser(Integer userId);
+    List<Item> readByUser(Integer userId);
 
 }

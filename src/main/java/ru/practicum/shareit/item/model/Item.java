@@ -11,10 +11,10 @@ import ru.practicum.shareit.user.User;
 @AllArgsConstructor
 public class Item {
 
-    private int id;
+    private Integer id;
     private String name;
     private String description;
-    private String status;
+    private Boolean available;
     private User owner;
     private String request;
 

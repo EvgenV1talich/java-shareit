@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.util.List;
+
 /**
  * TODO Sprint add-controllers.
  */
@@ -34,8 +36,12 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public void updateUser(UserDto user) {
-        service.update(user);
+    public User updateUser(@RequestBody @Valid UserDto user, @PathVariable Integer id) {
+        return service.update(user, id);
+    }
+    @GetMapping
+    public List<User> getAllUsers() {
+        return service.getAll();
     }
 
     @DeleteMapping("/{id}")

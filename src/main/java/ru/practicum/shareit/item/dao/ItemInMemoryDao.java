@@ -1,37 +1,45 @@
 package ru.practicum.shareit.item.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dao.UserDao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 @Repository
 public class ItemInMemoryDao implements ItemDao {
 
+    private final UserDao userDao;
+
     private final Set<Integer> indexes = new TreeSet<>();
     private Integer lastAddedIndex;
-
     private final HashMap<Integer, Item> items = new HashMap<>();
 
-    public ItemInMemoryDao() {
+    @Autowired
+    public ItemInMemoryDao(UserDao userDao) {
+        this.userDao = userDao;
         lastAddedIndex = 0;
         indexes.add(lastAddedIndex);
     }
 
     @Override
-    public void create(ItemDto item) {
-        checkIndex(item.getId());
-        items.put(item.getId(), ItemMapper.dtoToItem(item));
-        indexes.add(item.getId());
+    public Item create(Item item, Integer ownerId) {
+        if (item.getId() == null || !indexes.contains(item.getId())) {
+            item.setId(getNewIndex());
+            item.setAvailable(true);
+            setOwner(item, ownerId);
+        }
+        items.put(item.getId(), item);
+        return item;
+
     }
 
     @Override
@@ -41,9 +49,9 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public Item update(ItemDto item) {
-        checkIndex(item.getId());
-        items.replace(item.getId(), ItemMapper.dtoToItem(item));
+    public Item update(Integer id, Item item) {
+        checkIndex(id);
+        items.replace(item.getId(), item);
         return items.get(item.getId());
     }
 
@@ -54,21 +62,17 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public List<ItemDto> readAll() {
-        return items.values().stream()
-                .map(ItemMapper::itemToDto)
-                .collect(Collectors.toList());
+    public List<Item> readAll() {
+        return new ArrayList<>(items.values());
     }
 
     @Override
-    public List<ItemDto> readByUser(Integer userId) {
+    public List<Item> readByUser(Integer userId) {
         List<Item> userItems = new ArrayList<>();
-        return items.values().stream()
-                .filter(item -> item.getOwner().getId() == userId).map(ItemMapper::itemToDto)
-                .collect(Collectors.toList());
+        return new ArrayList<>(items.values());
     }
 
-    private void checkIndex(int newIndex) {
+    private void checkIndex(Integer newIndex) {
         if (indexes.contains(newIndex)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Item not found!");
         }
@@ -78,5 +82,12 @@ public class ItemInMemoryDao implements ItemDao {
         Integer newIndex = ++lastAddedIndex;
         indexes.add(newIndex);
         return lastAddedIndex;
+    }
+    private void setOwner(Item item, Integer ownerId) {
+        if (userDao.isUserExists(ownerId)) {
+            item.setOwner(userDao.read(ownerId));
+        } else {
+            throw new ResponseStatusException(HttpStatus.valueOf(404));
+        }
     }
 }

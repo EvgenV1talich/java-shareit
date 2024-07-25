@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.dao;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Repository
@@ -18,7 +18,7 @@ public class UserInMemoryDao implements UserDao {
     private final Set<Integer> indexes = new TreeSet<>();
     private Integer lastAddedIndex;
 
-    private List<String> emails = new ArrayList<>();
+    private HashMap<Integer, String> emails = new HashMap<>();
 
     private final HashMap<Integer, User> users = new HashMap<>();
 
@@ -34,7 +34,7 @@ public class UserInMemoryDao implements UserDao {
             user.setId(getNewIndex());
         }
         users.put(user.getId(), user);
-        emails.add(user.getEmail());
+        emails.put(user.getId(), user.getEmail());
         return user;
     }
 
@@ -45,16 +45,35 @@ public class UserInMemoryDao implements UserDao {
     }
 
     @Override
-    public User update(User user) {
-        checkIndex(user.getId());
-        users.replace(user.getId(), user);
+    public User update(User user, Integer id) {
+
+        boolean isNewId = user.getId() != null;
+        boolean isNewName = user.getName() != null;
+        boolean isNewEmail = user.getEmail() != null;
+
+        if (isNewId) {
+            throw new ResponseStatusException(HttpStatus.valueOf(500));
+        }
+        user.setId(id);
+        if (isNewName) {
+            users.get(id).setName(user.getName());
+        } else {
+            user.setName(users.get(id).getName());
+        }
+        if (isNewEmail) {
+            updateEmail(id, user.getEmail());
+        } else {
+            user.setEmail(users.get(id).getEmail());
+        }
         return user;
+
     }
 
     @Override
     public void delete(Integer userId) {
         checkIndex(userId);
         users.remove(userId);
+        emails.remove(userId);
     }
 
     @Override
@@ -64,11 +83,16 @@ public class UserInMemoryDao implements UserDao {
 
     @Override
     public boolean checkEmail(String email) {
-        return emails.contains(email);
+        return emails.containsValue(email);
+    }
+
+    @Override
+    public boolean isUserExists(Integer userId) {
+        return indexes.contains(userId);
     }
 
     private void checkIndex(int newIndex) {
-        if (indexes.contains(newIndex)) {
+        if (!indexes.contains(newIndex)) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Item not found!");
         }
     }
@@ -77,5 +101,15 @@ public class UserInMemoryDao implements UserDao {
         Integer newIndex = ++lastAddedIndex;
         indexes.add(newIndex);
         return lastAddedIndex;
+    }
+
+    private void updateEmail(Integer id, String email) {
+        if (emails.containsValue(email) && !users.get(id).getEmail().equals(email)) {
+            throw new ResponseStatusException(HttpStatus.valueOf(409));
+        } else {
+            emails.remove(id);
+            emails.put(id, email);
+            users.get(id).setEmail(email);
+        }
     }
 }

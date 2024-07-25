@@ -11,7 +11,7 @@ public class ItemMapper {
         return new ItemDto(item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getStatus(),
+                item.getAvailable(),
                 item.getOwner(),
                 item.getRequest());
     }
@@ -19,7 +19,7 @@ public class ItemMapper {
         return new Item(dto.getId(),
                 dto.getName(),
                 dto.getDescription(),
-                dto.getStatus(),
+                dto.getAvailable(),
                 dto.getOwner(),
                 dto.getRequest());
     }

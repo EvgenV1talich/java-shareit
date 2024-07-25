@@ -2,17 +2,16 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 @Service
 public interface ItemService {
 
-    void create(ItemDto item);
+    ItemDto create(ItemDto item, Integer ownerId);
 
-    Item read(Integer id);
+    ItemDto read(Integer id);
 
-    Item update(ItemDto item);
+    ItemDto update(Integer id, ItemDto item);
 
     void delete(Integer id);
 

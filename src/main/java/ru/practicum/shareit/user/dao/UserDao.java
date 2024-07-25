@@ -12,13 +12,15 @@ public interface UserDao {
 
     User read(Integer userId);
 
-    User update(User user);
+    User update(User user, Integer id);
 
     void delete(Integer userId);
 
     List<User> getAll();
 
     boolean checkEmail(String email);
+
+    boolean isUserExists(Integer userId);
 
 
 }
