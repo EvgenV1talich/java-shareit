@@ -9,8 +9,8 @@ import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dao.UserDao;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +22,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(ItemDto item, Integer ownerId) {
-        return ItemMapper.itemToDto(itemDao.create(ItemMapper.dtoToItem(item), ownerId));
+        return ItemMapper.itemToDto(itemDao.create(ItemMapper.dtoToItem(item), userDao.read(ownerId)));
     }
 
     @Override
@@ -31,11 +31,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto update(Integer id, ItemDto item, Integer requestUserId) {
-        if (!Objects.equals(id, requestUserId)) {
+    public ItemDto update(Integer itemId, ItemDto item, Integer requestUserId) {
+        if (!checkOwnByUser(requestUserId, itemId)) {
             throw new ResponseStatusException(HttpStatus.valueOf(403));
         }
-        return ItemMapper.itemToDto(itemDao.update(id, ItemMapper.dtoToItem(item), requestUserId));
+        return ItemMapper.itemToDto(itemDao.update(itemId, ItemMapper.dtoToItem(item), requestUserId, userDao.read(requestUserId)));
     }
 
     @Override
@@ -60,8 +60,15 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> searchItems(String request) {
         String formatRequest = request.toLowerCase();
+        if (formatRequest.isBlank() || formatRequest.isEmpty()) {
+            return new ArrayList<>();
+        }
         return itemDao.searchItems(request).stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
+    }
+
+    private boolean checkOwnByUser(Integer requestUserId, Integer itemId) {
+        return read(itemId).getOwner().getId().equals(requestUserId);
     }
 }

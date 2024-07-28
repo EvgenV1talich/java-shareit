@@ -1,12 +1,11 @@
 package ru.practicum.shareit.item.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dao.UserDao;
+import ru.practicum.shareit.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,24 +17,21 @@ import java.util.stream.Collectors;
 @Repository
 public class ItemInMemoryDao implements ItemDao {
 
-    private final UserDao userDao;
-
     private final Set<Integer> indexes = new TreeSet<>();
     private Integer lastAddedIndex;
     private final HashMap<Integer, Item> items = new HashMap<>();
 
     @Autowired
-    public ItemInMemoryDao(UserDao userDao) {
-        this.userDao = userDao;
+    public ItemInMemoryDao() {
         lastAddedIndex = 0;
         indexes.add(lastAddedIndex);
     }
 
     @Override
-    public Item create(Item item, Integer ownerId) {
+    public Item create(Item item, User owner) {
         if (item.getId() == null || !indexes.contains(item.getId())) {
             item.setAvailable(true);
-            setOwner(item, ownerId);
+            setOwner(item, owner);
             item.setId(getNewIndex());
         }
         items.put(item.getId(), item);
@@ -50,7 +46,7 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public Item update(Integer id, Item item, Integer requestUserId) {
+    public Item update(Integer id, Item item, Integer requestUserId, User owner) {
         boolean isNewName = item.getName() != null;
         boolean isNewDescription = item.getDescription() != null;
         boolean isNewAvailable = item.getAvailable() != null;
@@ -65,7 +61,7 @@ public class ItemInMemoryDao implements ItemDao {
         if (isNewAvailable) {
             items.get(id).setAvailable(item.getAvailable());
         }
-        items.get(id).setOwner(userDao.read(requestUserId));
+        item.setOwner(owner);
         items.replace(item.getId(), item);
         return items.get(id);
     }
@@ -119,11 +115,8 @@ public class ItemInMemoryDao implements ItemDao {
         indexes.add(newIndex);
         return lastAddedIndex;
     }
-    private void setOwner(Item item, Integer ownerId) {
-        if (userDao.isUserExists(ownerId)) {
-            item.setOwner(userDao.read(ownerId));
-        } else {
-            throw new ResponseStatusException(HttpStatus.valueOf(404));
-        }
+
+    private void setOwner(Item item, User owner) {
+        item.setOwner(owner);
     }
 }
