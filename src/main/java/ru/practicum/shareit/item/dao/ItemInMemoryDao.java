@@ -1,9 +1,8 @@
 package ru.practicum.shareit.item.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -106,7 +105,7 @@ public class ItemInMemoryDao implements ItemDao {
 
     private void checkIndex(Integer newIndex) {
         if (!indexes.contains(newIndex)) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Item not found!");
+            throw new ItemNotFoundException("Такой item не найден");
         }
     }
 

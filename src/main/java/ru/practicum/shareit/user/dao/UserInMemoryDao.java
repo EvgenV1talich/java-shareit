@@ -1,9 +1,10 @@
 package ru.practicum.shareit.user.dao;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.exceptions.EmailExistsException;
+import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.user.User;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class UserInMemoryDao implements UserDao {
 
     private void checkIndex(int newIndex) {
         if (!indexes.contains(newIndex)) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Item not found!");
+            throw new ItemNotFoundException("Ошибка создания Item " + newIndex);
         }
     }
 
@@ -105,7 +106,7 @@ public class UserInMemoryDao implements UserDao {
 
     private void updateEmail(Integer id, String email) {
         if (emails.containsValue(email) && !users.get(id).getEmail().equals(email)) {
-            throw new ResponseStatusException(HttpStatus.valueOf(409));
+            throw new EmailExistsException("Такой email уже существует");
         } else {
             emails.remove(id);
             emails.put(id, email);

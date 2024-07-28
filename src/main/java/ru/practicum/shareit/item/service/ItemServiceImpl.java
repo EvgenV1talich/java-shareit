@@ -1,9 +1,8 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.exceptions.UserNoAcсessException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -33,7 +32,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto update(Integer itemId, ItemDto item, Integer requestUserId) {
         if (!checkOwnByUser(requestUserId, itemId)) {
-            throw new ResponseStatusException(HttpStatus.valueOf(403));
+            throw new UserNoAcсessException("У пользователя нет доступа к item " + itemId);
         }
         return ItemMapper.itemToDto(itemDao.update(itemId, ItemMapper.dtoToItem(item), requestUserId, userDao.read(requestUserId)));
     }

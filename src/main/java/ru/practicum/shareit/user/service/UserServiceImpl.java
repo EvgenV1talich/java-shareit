@@ -1,9 +1,9 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import ru.practicum.shareit.exceptions.EmailExistsException;
+import ru.practicum.shareit.exceptions.FailInputParamsException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -20,10 +20,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(UserDto user) {
         if (userDao.checkEmail(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.valueOf(409), "Такой e-mail уже используется!");
+            throw new EmailExistsException("Email уже используется");
         }
         if (user.getEmail() == null) {
-            throw new ResponseStatusException(HttpStatus.valueOf(400));
+            throw new FailInputParamsException("Передан пустой параметр e-mail!");
         }
         return userDao.create(UserMapper.dtotoUser(user));
     }
