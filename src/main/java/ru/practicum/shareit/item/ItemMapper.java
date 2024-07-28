@@ -15,6 +15,7 @@ public class ItemMapper {
                 item.getOwner(),
                 item.getRequest());
     }
+
     public static Item dtoToItem(ItemDto dto) {
         return new Item(dto.getId(),
                 dto.getName(),

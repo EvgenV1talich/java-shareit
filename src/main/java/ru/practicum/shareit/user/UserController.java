@@ -39,6 +39,7 @@ public class UserController {
     public User updateUser(@RequestBody @Valid UserDto user, @PathVariable Integer id) {
         return service.update(user, id);
     }
+
     @GetMapping
     public List<User> getAllUsers() {
         return service.getAll();

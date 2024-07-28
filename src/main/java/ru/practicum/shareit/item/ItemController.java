@@ -47,6 +47,7 @@ public class ItemController {
     public List<ItemDto> getItemsByOwner(@RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
         return service.readByUser(userId);
     }
+
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestParam(name = "text") String text) {
         return service.searchItems(text);
