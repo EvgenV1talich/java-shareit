@@ -3,30 +3,32 @@ package ru.practicum.shareit.item.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.User;
 
 /**
  * TODO Sprint add-controllers.
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class ItemDto {
 
-    private final Long id;
+    private Long id;
     @NotBlank
     @NotNull
     @NotEmpty
-    private final String name;
+    private String name;
     @NotBlank
     @NotNull
     @NotEmpty
-    private final String description;
+    private String description;
     @NotNull
-    private final Boolean available;
-    private final User owner;
-    private final String request;
+    private Boolean available;
+    private User owner;
+    private String request;
 
 
 }
