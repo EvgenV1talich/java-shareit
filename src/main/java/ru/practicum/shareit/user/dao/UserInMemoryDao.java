@@ -69,6 +69,7 @@ public class UserInMemoryDao implements UserDao {
         return user;
 
     }
+
     @Override
     public void delete(Long userId) {
         checkIndex(userId);

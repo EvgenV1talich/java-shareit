@@ -47,6 +47,7 @@ public class ItemController {
     public List<ItemDto> getItemsByOwner(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         return service.readByUser(userId);
     }
+
     @GetMapping("/all")
     public List<ItemDto> getAllItems() {
         return service.readAll();
