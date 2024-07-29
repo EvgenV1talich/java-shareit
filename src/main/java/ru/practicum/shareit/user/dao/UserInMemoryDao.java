@@ -19,7 +19,7 @@ public class UserInMemoryDao implements UserDao {
     private final Set<Long> indexes = new TreeSet<>();
     private Long lastAddedIndex;
 
-    private HashMap<Long, String> emails = new HashMap<>();
+    private final HashMap<Long, String> emails = new HashMap<>();
 
     private final HashMap<Long, User> users = new HashMap<>();
 
