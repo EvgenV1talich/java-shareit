@@ -11,10 +11,7 @@ public class UserMapper {
         if (user == null) {
             throw new UserCreateException("Ошибка маппинга пользователя");
         }
-        UserDto dto = new UserDto();
-        dto.setName(user.getName());
-        dto.setEmail(user.getEmail());
-        return dto;
+        return new UserDto(user.getName(), user.getEmail());
     }
 
     public static User toUser(UserDto dto) {
