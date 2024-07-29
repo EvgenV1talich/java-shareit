@@ -1,12 +1,11 @@
 package ru.practicum.shareit.item.dao;
 
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.util.List;
 
-@Repository
+
 public interface ItemDao {
 
     Item create(Item item, User owner);
