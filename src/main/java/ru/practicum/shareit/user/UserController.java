@@ -33,12 +33,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserDto readUser(@PathVariable Long id) {
-        return UserMapper.userToDto(service.read(id));
+        return UserMapper.toDto(service.read(id));
     }
 
     @PatchMapping("/{id}")
     public UserDto updateUser(@RequestBody @Valid UserDto user, @PathVariable Long id) {
-        return UserMapper.userToDto(service.update(user, id));
+        return UserMapper.toDto(service.update(user, id));
     }
 
     @GetMapping

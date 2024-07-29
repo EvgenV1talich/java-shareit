@@ -1,17 +1,25 @@
 package ru.practicum.shareit.user.mapper;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 
 @Component
 public class UserMapper {
-    public static UserDto userToDto(User user) {
-        return new UserDto(user.getId().toString(), user.getName(),
-                user.getEmail());
+    public static UserDto toDto(User user) {
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.valueOf(500));
+        }
+        UserDto dto = new UserDto();
+        dto.setId(String.valueOf(user.getId()));
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        return dto;
     }
 
-    public static User dtotoUser(UserDto dto) {
-        return new User(null, dto.getName(), dto.getEmail());
+    public static User toUser(UserDto dto) {
+        return new User(dto.getName(), dto.getEmail());
     }
 }
