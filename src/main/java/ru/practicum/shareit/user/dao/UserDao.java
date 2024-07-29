@@ -1,26 +1,25 @@
 package ru.practicum.shareit.user.dao;
 
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.User;
 
 import java.util.List;
 
-@Repository
+
 public interface UserDao {
 
     User create(User user);
 
-    User read(Integer userId);
+    User read(Long userId);
 
-    User update(User user, Integer id);
+    User update(User user, Long id);
 
-    void delete(Integer userId);
+    void delete(Long userId);
 
     List<User> getAll();
 
     boolean checkEmail(String email);
 
-    boolean isUserExists(Integer userId);
+    boolean isUserExists(Long userId);
 
 
 }

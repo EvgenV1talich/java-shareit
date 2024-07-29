@@ -20,17 +20,17 @@ public class ItemServiceImpl implements ItemService {
     private final UserDao userDao;
 
     @Override
-    public ItemDto create(ItemDto item, Integer ownerId) {
+    public ItemDto create(ItemDto item, Long ownerId) {
         return ItemMapper.itemToDto(itemDao.create(ItemMapper.dtoToItem(item), userDao.read(ownerId)));
     }
 
     @Override
-    public ItemDto read(Integer id) {
+    public ItemDto read(Long id) {
         return ItemMapper.itemToDto(itemDao.read(id));
     }
 
     @Override
-    public ItemDto update(Integer itemId, ItemDto item, Integer requestUserId) {
+    public ItemDto update(Long itemId, ItemDto item, Long requestUserId) {
         if (!checkOwnByUser(requestUserId, itemId)) {
             throw new UserNoAccessException("У пользователя нет доступа к item " + itemId);
         }
@@ -38,7 +38,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
         itemDao.delete(id);
     }
 
@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> readByUser(Integer userId) {
+    public List<ItemDto> readByUser(Long userId) {
         return itemDao.readByUser(userId).stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
@@ -67,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    private boolean checkOwnByUser(Integer requestUserId, Integer itemId) {
+    private boolean checkOwnByUser(Long requestUserId, Long itemId) {
         return read(itemId).getOwner().getId().equals(requestUserId);
     }
 }

@@ -16,15 +16,15 @@ import java.util.TreeSet;
 @Repository
 public class UserInMemoryDao implements UserDao {
 
-    private final Set<Integer> indexes = new TreeSet<>();
-    private Integer lastAddedIndex;
+    private final Set<Long> indexes = new TreeSet<>();
+    private Long lastAddedIndex;
 
-    private HashMap<Integer, String> emails = new HashMap<>();
+    private HashMap<Long, String> emails = new HashMap<>();
 
-    private final HashMap<Integer, User> users = new HashMap<>();
+    private final HashMap<Long, User> users = new HashMap<>();
 
     public UserInMemoryDao() {
-        lastAddedIndex = 0;
+        lastAddedIndex = 0L;
         indexes.add(lastAddedIndex);
 
     }
@@ -40,13 +40,13 @@ public class UserInMemoryDao implements UserDao {
     }
 
     @Override
-    public User read(Integer userId) {
+    public User read(Long userId) {
         checkIndex(userId);
         return users.get(userId);
     }
 
     @Override
-    public User update(User user, Integer id) {
+    public User update(User user, Long id) {
 
         boolean isNewId = user.getId() != null;
         boolean isNewName = user.getName() != null;
@@ -69,12 +69,10 @@ public class UserInMemoryDao implements UserDao {
         return user;
 
     }
-
     @Override
-    public void delete(Integer userId) {
+    public void delete(Long userId) {
         checkIndex(userId);
         users.remove(userId);
-        emails.remove(userId);
     }
 
     @Override
@@ -88,23 +86,23 @@ public class UserInMemoryDao implements UserDao {
     }
 
     @Override
-    public boolean isUserExists(Integer userId) {
+    public boolean isUserExists(Long userId) {
         return indexes.contains(userId);
     }
 
-    private void checkIndex(int newIndex) {
+    private void checkIndex(Long newIndex) {
         if (!indexes.contains(newIndex)) {
             throw new ItemNotFoundException("Ошибка создания Item " + newIndex);
         }
     }
 
-    private Integer getNewIndex() {
-        Integer newIndex = ++lastAddedIndex;
+    private Long getNewIndex() {
+        Long newIndex = ++lastAddedIndex;
         indexes.add(newIndex);
         return lastAddedIndex;
     }
 
-    private void updateEmail(Integer id, String email) {
+    private void updateEmail(Long id, String email) {
         if (emails.containsValue(email) && !users.get(id).getEmail().equals(email)) {
             throw new EmailExistsException("Такой email уже существует");
         } else {

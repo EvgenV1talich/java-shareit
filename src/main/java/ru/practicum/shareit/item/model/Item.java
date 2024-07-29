@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.User;
 @AllArgsConstructor
 public class Item {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
     private Boolean available;

@@ -29,17 +29,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User read(Integer userId) {
+    public User read(Long userId) {
         return userDao.read(userId);
     }
 
     @Override
-    public User update(UserDto user, Integer id) {
+    public User update(UserDto user, Long id) {
         return userDao.update(UserMapper.dtotoUser(user), id);
     }
 
     @Override
-    public void delete(Integer userId) {
+    public void delete(Long userId) {
         userDao.delete(userId);
     }
 

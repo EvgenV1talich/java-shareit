@@ -16,20 +16,20 @@ import java.util.stream.Collectors;
 @Repository
 public class ItemInMemoryDao implements ItemDao {
 
-    private final Set<Integer> indexes = new TreeSet<>();
-    private Integer lastAddedIndex;
-    private final HashMap<Integer, Item> items = new HashMap<>();
+    private final Set<Long> indexes = new TreeSet<>();
+    private Long lastAddedIndex;
+    private final HashMap<Long, Item> items = new HashMap<>();
 
     @Autowired
     public ItemInMemoryDao() {
-        lastAddedIndex = 0;
+        lastAddedIndex = 0L;
         indexes.add(lastAddedIndex);
     }
 
     @Override
     public Item create(Item item, User owner) {
         if (item.getId() == null || !indexes.contains(item.getId())) {
-            item.setAvailable(true);
+            item.setAvailable(item.getAvailable());
             setOwner(item, owner);
             item.setId(getNewIndex());
         }
@@ -39,13 +39,13 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public Item read(Integer id) {
+    public Item read(Long id) {
         checkIndex(id);
         return items.get(id);
     }
 
     @Override
-    public Item update(Integer id, Item item, Integer requestUserId, User owner) {
+    public Item update(Long id, Item item, Long requestUserId, User owner) {
         boolean isNewName = item.getName() != null;
         boolean isNewDescription = item.getDescription() != null;
         boolean isNewAvailable = item.getAvailable() != null;
@@ -56,7 +56,6 @@ public class ItemInMemoryDao implements ItemDao {
         if (isNewDescription) {
             items.get(id).setDescription(item.getDescription());
         }
-        //TODO item update set unavailable test
         if (isNewAvailable) {
             items.get(id).setAvailable(item.getAvailable());
         }
@@ -66,7 +65,7 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
         checkIndex(id);
         items.remove(id);
     }
@@ -77,7 +76,7 @@ public class ItemInMemoryDao implements ItemDao {
     }
 
     @Override
-    public List<Item> readByUser(Integer userId) {
+    public List<Item> readByUser(Long userId) {
         return items.values().stream()
                 .filter(item -> item.getOwner()
                         .getId()
@@ -93,24 +92,16 @@ public class ItemInMemoryDao implements ItemDao {
                 .filter(item -> item.getName().toLowerCase().contains(request.toLowerCase())
                         || item.getDescription().toLowerCase().contains(request.toLowerCase()))
                 .collect(Collectors.toList());
-//        List<Item> necessaryItems = new ArrayList<>();
-//        for (Item item : availableItems) {
-//            if (item.getName().toLowerCase().contains(request.toLowerCase())
-//                    || item.getDescription().toLowerCase().contains(request.toLowerCase())) {
-//                necessaryItems.add(item);
-//            }
-//        }
-//        return necessaryItems;
     }
 
-    private void checkIndex(Integer newIndex) {
+    private void checkIndex(Long newIndex) {
         if (!indexes.contains(newIndex)) {
             throw new ItemNotFoundException("Такой item не найден");
         }
     }
 
-    private Integer getNewIndex() {
-        Integer newIndex = ++lastAddedIndex;
+    private Long getNewIndex() {
+        Long newIndex = ++lastAddedIndex;
         indexes.add(newIndex);
         return lastAddedIndex;
     }

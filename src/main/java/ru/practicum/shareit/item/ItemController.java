@@ -27,25 +27,29 @@ public class ItemController {
     private final ItemService service;
 
     @PostMapping
-    public ItemDto addItem(@RequestBody @Valid ItemDto itemDto, @RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
+    public ItemDto addItem(@RequestBody @Valid ItemDto itemDto, @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         return service.create(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@PathVariable Integer itemId,
+    public ItemDto updateItem(@PathVariable Long itemId,
                               @RequestBody ItemDto itemDto,
-                              @RequestHeader(value = "X-Sharer-User-Id") Integer requestUserId) {
+                              @RequestHeader(value = "X-Sharer-User-Id") Long requestUserId) {
         return service.update(itemId, itemDto, requestUserId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@PathVariable int itemId) {
+    public ItemDto getItem(@PathVariable Long itemId) {
         return service.read(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByOwner(@RequestHeader(value = "X-Sharer-User-Id") Integer userId) {
+    public List<ItemDto> getItemsByOwner(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
         return service.readByUser(userId);
+    }
+    @GetMapping("/all")
+    public List<ItemDto> getAllItems() {
+        return service.readAll();
     }
 
     @GetMapping("/search")

@@ -1,25 +1,24 @@
 package ru.practicum.shareit.item.dao;
 
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.util.List;
 
-@Repository
+
 public interface ItemDao {
 
     Item create(Item item, User owner);
 
-    Item read(Integer id);
+    Item read(Long id);
 
-    Item update(Integer id, Item item, Integer requestUserId, User user);
+    Item update(Long id, Item item, Long requestUserId, User user);
 
-    void delete(Integer id);
+    void delete(Long id);
 
     List<Item> readAll();
 
-    List<Item> readByUser(Integer userId);
+    List<Item> readByUser(Long userId);
 
     List<Item> searchItems(String request);
 

@@ -14,7 +14,7 @@ import ru.practicum.shareit.user.User;
 @Data
 public class ItemDto {
 
-    private final Integer id;
+    private final Long id;
     @NotBlank
     @NotNull
     @NotEmpty
