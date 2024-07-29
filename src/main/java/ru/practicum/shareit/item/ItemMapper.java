@@ -10,7 +10,7 @@ import ru.practicum.shareit.item.model.Item;
 public class ItemMapper {
 
     public static ItemDto toDto(Item item) {
-        if(item == null) {
+        if (item == null) {
             throw new ResponseStatusException(HttpStatus.valueOf(500));
         }
         ItemDto dto = new ItemDto();
