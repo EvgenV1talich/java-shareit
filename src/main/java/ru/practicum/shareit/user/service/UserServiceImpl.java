@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
         if (user.getEmail() == null) {
             throw new FailInputParamsException("Передан пустой параметр e-mail!");
         }
-        return userDao.create(UserMapper.dtotoUser(user));
+        return userDao.create(UserMapper.toUser(user));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(UserDto user, Integer id) {
-        return userDao.update(UserMapper.dtotoUser(user), id);
+        return userDao.update(UserMapper.toUser(user), id);
     }
 
     @Override

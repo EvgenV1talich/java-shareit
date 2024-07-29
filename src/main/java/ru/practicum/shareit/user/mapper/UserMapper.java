@@ -11,11 +11,13 @@ public class UserMapper {
         if (user == null) {
             throw new UserCreateException("Ошибка маппинга пользователя");
         }
-        return new UserDto(user.getName(),
-                user.getEmail());
+        UserDto dto = new UserDto();
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        return dto;
     }
 
-    public static User dtotoUser(UserDto dto) {
-        return new User(null, dto.getName(), dto.getEmail());
+    public static User toUser(UserDto dto) {
+        return new User(dto.getName(), dto.getEmail());
     }
 }
