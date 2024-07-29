@@ -32,8 +32,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User readUser(@PathVariable Long id) {
-        return service.read(id);
+    public UserDto readUser(@PathVariable Long id) {
+        return UserMapper.userToDto(service.read(id));
     }
 
     @PatchMapping("/{id}")
