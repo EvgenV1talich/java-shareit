@@ -21,12 +21,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(ItemDto item, Integer ownerId) {
-        return ItemMapper.itemToDto(itemDao.create(ItemMapper.dtoToItem(item), userDao.read(ownerId)));
+        return ItemMapper.toDto(itemDao.create(ItemMapper.dtoToItem(item), userDao.read(ownerId)));
     }
 
     @Override
     public ItemDto read(Integer id) {
-        return ItemMapper.itemToDto(itemDao.read(id));
+        return ItemMapper.toDto(itemDao.read(id));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
         if (!checkOwnByUser(requestUserId, itemId)) {
             throw new UserNoAccessException("У пользователя нет доступа к item " + itemId);
         }
-        return ItemMapper.itemToDto(itemDao.update(itemId, ItemMapper.dtoToItem(item), requestUserId, userDao.read(requestUserId)));
+        return ItemMapper.toDto(itemDao.update(itemId, ItemMapper.dtoToItem(item), requestUserId, userDao.read(requestUserId)));
     }
 
     @Override
@@ -45,14 +45,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> readAll() {
         return itemDao.readAll().stream()
-                .map(ItemMapper::itemToDto)
+                .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ItemDto> readByUser(Integer userId) {
         return itemDao.readByUser(userId).stream()
-                .map(ItemMapper::itemToDto)
+                .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
         return itemDao.searchItems(request).stream()
-                .map(ItemMapper::itemToDto)
+                .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
     }
 

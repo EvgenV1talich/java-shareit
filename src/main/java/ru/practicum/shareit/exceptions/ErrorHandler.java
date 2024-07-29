@@ -33,4 +33,9 @@ public class ErrorHandler {
     public Map<String, String> handleItemNotFoundException(ItemNotFoundException ex) {
         return Map.of("error", "Ошибка обработки полученных данных (не заполнены/заполнены с ошибками обязательные поля)");
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleUserCreateException(UserCreateException ex) {
+        return Map.of("error", "Ошибка при создании пользователя");
+    }
 }
