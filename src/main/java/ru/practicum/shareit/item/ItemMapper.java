@@ -24,12 +24,17 @@ public class ItemMapper {
     }
 
     public static Item toItem(ItemDto dto) {
-        return new Item(dto.getId(),
-                dto.getName(),
-                dto.getDescription(),
-                dto.getAvailable(),
-                dto.getOwner(),
-                dto.getRequest());
+        if (dto == null) {
+            throw new ResponseStatusException(HttpStatus.valueOf(500));
+        }
+        Item item = new Item();
+        item.setId(dto.getId());
+        item.setName(dto.getName());
+        item.setDescription(dto.getDescription());
+        item.setAvailable(dto.getAvailable());
+        item.setOwner(dto.getOwner());
+        item.setRequest(dto.getRequest());
+        return item;
     }
 
 }
