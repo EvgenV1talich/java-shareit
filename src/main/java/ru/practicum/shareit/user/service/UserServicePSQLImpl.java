@@ -33,7 +33,7 @@ public class UserServicePSQLImpl implements UserService {
 
     @Override
     public User update(UserDto user, Long id) {
-        User oldUser = read(id);
+        /*User oldUser = read(id);
         User updatedUser = new User();
         boolean isNewName = user.getName() != null;
         boolean isNewEmail = user.getEmail() != null;
@@ -49,7 +49,29 @@ public class UserServicePSQLImpl implements UserService {
         } else {
             updatedUser.setEmail(oldUser.getEmail());
         }
-        return dao.save(updatedUser);
+        return dao.save(updatedUser);*/
+        boolean isNewName = user.getName() != null;
+        boolean isNewEmail = user.getEmail() != null;
+        if (isNewEmail) {
+            if (!isEmailUnique(user.getEmail()))
+                throw new EmailExistsException("Ошибка при обновлении пользователя (email уже существует");
+        }
+        User userToUpdate = UserMapper.toUser(user);
+        User oldUser = read(id);
+        userToUpdate.setId(id);
+        //Name update
+        if (isNewName) {
+            userToUpdate.setName(user.getName());
+        } else {
+            userToUpdate.setName(oldUser.getName());
+        }
+        //EmailUpdate
+        if (isNewEmail) {
+            userToUpdate.setEmail(user.getEmail());
+        } else {
+            userToUpdate.setEmail(oldUser.getEmail());
+        }
+        return dao.save(userToUpdate);
 
     }
 
