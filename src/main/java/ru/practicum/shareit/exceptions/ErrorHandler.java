@@ -33,4 +33,9 @@ public class ErrorHandler {
     public Map<String, String> handleItemNotFoundException(ItemNotFoundException ex) {
         return Map.of("error", "Ошибка обработки полученных данных (не заполнены/заполнены с ошибками обязательные поля)");
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleUserNotFoundException(UserNotFoundException ex) {
+        return Map.of("error", "Такой пользователь не найден!");
+    }
 }
