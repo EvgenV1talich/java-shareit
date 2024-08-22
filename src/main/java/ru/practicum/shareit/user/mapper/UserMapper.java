@@ -13,7 +13,7 @@ public class UserMapper {
             throw new ResponseStatusException(HttpStatus.valueOf(500));
         }
         UserDto dto = new UserDto();
-        dto.setId(String.valueOf(user.getId()));
+        dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         return dto;
