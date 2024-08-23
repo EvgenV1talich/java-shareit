@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserPSQLDao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,19 +89,19 @@ public class ItemServicePSQLImpl implements ItemService {
 
     @Override
     public List<ItemDto> readAll() {
-        return itemDao.findAll().stream()
-                .map(ItemMapper::toDto)
-                .collect(Collectors.toList());
+        return castItemsListToDtos(itemDao.findAll());
     }
 
     @Override
     public List<ItemDto> readByUser(Long userId) {
-        return null;
+        return castItemsListToDtos(itemDao.getAllItemsByUser(userId));
     }
 
     @Override
     public List<ItemDto> searchItems(String request) {
-        return null;
+        if (request.isEmpty()) return new ArrayList<>();
+        String toLower = request.toLowerCase();
+        return castItemsListToDtos(itemDao.searchItems(toLower));
     }
 
     private boolean checkOwnByUser(Long requestUserId, Long itemId) {
@@ -108,5 +109,8 @@ public class ItemServicePSQLImpl implements ItemService {
                 .getOwner()
                 .getId()
                 .equals(requestUserId);
+    }
+    private List<ItemDto> castItemsListToDtos(List<Item> items) {
+        return items.stream().map(ItemMapper::toDto).collect(Collectors.toList());
     }
 }
