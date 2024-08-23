@@ -17,6 +17,7 @@ import java.util.List;
 public class UserServicePSQLImpl implements UserService {
 
     private final UserPSQLDao dao;
+
     @Override
     public User create(UserDto user) {
         if (isEmailUnique(user.getEmail())) {
@@ -33,23 +34,7 @@ public class UserServicePSQLImpl implements UserService {
 
     @Override
     public User update(UserDto user, Long id) {
-        /*User oldUser = read(id);
-        User updatedUser = new User();
-        boolean isNewName = user.getName() != null;
-        boolean isNewEmail = user.getEmail() != null;
 
-        if (isNewName) {
-            updatedUser.setName(user.getName());
-        } else {
-            updatedUser.setName(oldUser.getName());
-        }
-        if (isNewEmail) {
-            if (!isEmailUnique(user.getEmail())) throw new EmailExistsException("Email already exists!");
-            updatedUser.setEmail(user.getEmail());
-        } else {
-            updatedUser.setEmail(oldUser.getEmail());
-        }
-        return dao.save(updatedUser);*/
         boolean isNewName = user.getName() != null;
         boolean isNewEmail = user.getEmail() != null;
         if (isNewEmail) {

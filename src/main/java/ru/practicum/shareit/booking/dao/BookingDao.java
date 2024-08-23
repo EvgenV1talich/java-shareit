@@ -13,15 +13,15 @@ import java.util.List;
 public interface BookingDao extends JpaRepository<Booking, Long> {
     List<Booking> findByBooker_Id(Long bookerId);
 
-    @Query("SELECT * FROM bookings WHERE booker_id == :requesterId AND end_time <= :endTime")
+    @Query(value = "SELECT * FROM bookings WHERE booker_id == :requesterId AND end_time <= :endTime", nativeQuery = true)
     List<Booking> findCurrentByUser(@Param("requesterId") Long requesterId, @Param("endTime") LocalDateTime endTime);
 
-    @Query("SELECT * FROM bookings WHERE booker_id == :requesterId AND end_time > :endTime")
+    @Query(value = "SELECT * FROM bookings WHERE booker_id == :requesterId AND end_time > :endTime", nativeQuery = true)
     List<Booking> findPastByUser(@Param("requesterId") Long requesterId, @Param("endTime") LocalDateTime endTime);
 
-    @Query("SELECT * FROM bookings WHERE booker_id == :requesterId AND status == 'WAITING'")
+    @Query(value = "SELECT * FROM bookings WHERE booker_id == :requesterId AND status == 'WAITING'", nativeQuery = true)
     List<Booking> findWaitingByUser(Long requesterId);
 
-    @Query("SELECT * FROM bookings WHERE booker_id == :requesterId AND status == 'REJECTED'")
+    @Query(value = "SELECT * FROM bookings WHERE booker_id == :requesterId AND status == 'REJECTED'", nativeQuery = true)
     List<Booking> findRejectedByUser(Long requesterId);
 }

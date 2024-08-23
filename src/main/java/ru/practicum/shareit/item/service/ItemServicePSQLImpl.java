@@ -8,6 +8,7 @@ import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dao.ItemPSQLDao;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserPSQLDao;
 
 import java.util.List;
@@ -20,9 +21,11 @@ public class ItemServicePSQLImpl implements ItemService {
 
     private final ItemPSQLDao itemDao;
     private final UserPSQLDao userDao;
+
     @Override
     public ItemDto create(ItemDto item, Long ownerId) {
         if (!userDao.existsById(ownerId)) throw new UserNotFoundException("Такого пользователя не существует!");
+        item.setOwner(userDao.getReferenceById(ownerId));
         return ItemMapper.toDto(itemDao.save(ItemMapper.toItem(item)));
     }
 
@@ -33,8 +36,49 @@ public class ItemServicePSQLImpl implements ItemService {
 
     @Override
     public ItemDto update(Long id, ItemDto item, Long userId) {
-        if (!checkOwnByUser(id, userId)) throw new UserNoAccessException("У пользователя нет доступа к item " + id);
-        return ItemMapper.toDto(itemDao.save(ItemMapper.toItem(item)));
+        if (!checkOwnByUser(userId, id)) throw new UserNoAccessException("У пользователя нет доступа к item " + id);
+        item.setId(id);
+        boolean isNewName = item.getName() != null;
+        boolean isNewDescription = item.getDescription() != null;
+        boolean isNewAvailable = item.getAvailable() != null;
+        boolean isNewRequest = item.getRequest() != null;
+        boolean isNewOwner = item.getOwner() != null;
+
+        Item oldItem = itemDao.getReferenceById(id);
+
+        Item itemToUpdate = new Item();
+        itemToUpdate.setId(id);
+        //Name update
+        if (isNewName) {
+            itemToUpdate.setName(item.getName());
+        } else {
+            itemToUpdate.setName(oldItem.getName());
+        }
+        //Description update
+        if (isNewDescription) {
+            itemToUpdate.setDescription(item.getDescription());
+        } else {
+            itemToUpdate.setDescription(oldItem.getDescription());
+        }
+        //Available update
+        if (isNewAvailable) {
+            itemToUpdate.setAvailable(item.getAvailable());
+        } else {
+            itemToUpdate.setAvailable(oldItem.getAvailable());
+        }
+        //Request update
+        if (isNewRequest) {
+            itemToUpdate.setRequest(item.getRequest());
+        } else {
+            itemToUpdate.setRequest(oldItem.getRequest());
+        }
+        //Owner update
+        if (isNewOwner) {
+            itemToUpdate.setOwner(item.getOwner());
+        } else {
+            itemToUpdate.setOwner(oldItem.getOwner());
+        }
+        return ItemMapper.toDto(itemDao.save(itemToUpdate));
     }
 
     @Override
