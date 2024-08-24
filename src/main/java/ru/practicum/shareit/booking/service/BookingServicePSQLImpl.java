@@ -7,8 +7,14 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.exceptions.BookingTimeValidationException;
+import ru.practicum.shareit.exceptions.FailInputParamsException;
+import ru.practicum.shareit.exceptions.ItemNotAvailableException;
 import ru.practicum.shareit.exceptions.UserNoAccessException;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -25,9 +31,21 @@ public class BookingServicePSQLImpl implements BookingService {
     private final BookingMapper bookingMapper;
 
     @Override
-    public BookingDto addRequest(Booking request) {
-        request.setStatus(BookingStatus.WAITING);
-        return bookingMapper.toDto(bookingDao.save(request));
+    public BookingDto addRequest(BookingDto request, Long bookerId) {
+        Item item = ItemMapper.toItem(itemService.read(request.getItemId()));
+        User booker = userService.read(bookerId);
+        validateBookingTime(request);
+        if (!item.getAvailable()) {
+            throw new ItemNotAvailableException("Ошибка при запросе на бронирование недоступной вещи!");
+        }
+        //New booking creation
+        Booking newBooking = new Booking();
+        newBooking.setStatus(BookingStatus.WAITING);
+        newBooking.setItem(item);
+        newBooking.setStart(request.getStart());
+        newBooking.setEnd(request.getEnd());
+        newBooking.setBooker(booker);
+        return bookingMapper.toDto(bookingDao.save(newBooking));
     }
 
     @Override
@@ -39,24 +57,23 @@ public class BookingServicePSQLImpl implements BookingService {
                 .getId())) {
             throw new UserNoAccessException("Ошибка при подтверждении запроса бронирования (нет доступа)...");
         }
+        Booking updatedBooking = bookingDao.getReferenceById(bookingId);
         if (isApproved) {
-            Booking updatedBooking = bookingDao.getReferenceById(bookingId);
-            updatedBooking.setStatus(BookingStatus.APPOROVED);
-            return bookingMapper.toDto(bookingDao.save(updatedBooking));
+            updatedBooking.setStatus(BookingStatus.APPROVED);
         } else {
-            Booking updatedBooking = bookingDao.getReferenceById(bookingId);
             updatedBooking.setStatus(BookingStatus.REJECTED);
-            return bookingMapper.toDto(bookingDao.save(updatedBooking));
         }
+        return bookingMapper.toDto(bookingDao.save(updatedBooking));
     }
 
     @Override
     public BookingDto getInfoForRequest(Long id, Long requesterId) {
-        if (!requesterId.equals(bookingDao.getReferenceById(id).getItem().getOwner().getId()) ||
-                !requesterId.equals(bookingDao.getReferenceById(id).getBooker().getId())) {
+        if (requesterId.equals(bookingDao.getReferenceById(id).getItem().getOwner().getId()) ||
+                requesterId.equals(bookingDao.getReferenceById(id).getBooker().getId())) {
+            return bookingMapper.toDto(bookingDao.getReferenceById(id));
+        } else {
             throw new UserNoAccessException("Ошибка при получении инфо о бронировании (нет доступа)...");
         }
-        return bookingMapper.toDto(bookingDao.getReferenceById(id));
     }
 
     @Override
@@ -75,6 +92,21 @@ public class BookingServicePSQLImpl implements BookingService {
                 .sorted(Comparator.comparing(Booking::getEnd))
                 .map(bookingMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    private void validateBookingTime(BookingDto booking) {
+        if (booking.getStart() == null || booking.getEnd() == null) {
+            throw new FailInputParamsException("Ошибка в запросе на бронирование (не указано время начала/конца бронирования)");
+        }
+        if (booking.getEnd().isBefore(LocalDateTime.now())) {
+            throw new BookingTimeValidationException("Ошибка в запросе на бронирование (время окончания бронирования уже прошло)");
+        }
+        if (booking.getStart().equals(booking.getEnd())) {
+            throw new BookingTimeValidationException("Ошибка в запросе на бронирование (start time = end time)");
+        }
+        if (booking.getStart().isBefore(LocalDateTime.now())) {
+            throw new BookingTimeValidationException("Ошибка в запросе на бронирование (start time < now)");
+        }
     }
 
     @Override

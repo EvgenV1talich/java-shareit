@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.EmailExistsException;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dao.UserPSQLDao;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -29,6 +30,9 @@ public class UserServicePSQLImpl implements UserService {
 
     @Override
     public User read(Long userId) {
+        if (!dao.existsById(userId)) {
+            throw new UserNotFoundException("Ошибка при чтении user (id = " + userId + ")");
+        }
         return dao.getReferenceById(userId);
     }
 

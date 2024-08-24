@@ -38,4 +38,14 @@ public class ErrorHandler {
     public Map<String, String> handleUserNotFoundException(UserNotFoundException ex) {
         return Map.of("error", "Такой пользователь не найден!");
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleItemNotAvailableException(ItemNotAvailableException ex) {
+        return Map.of("error", "Эта вещь недоступна для бронирования");
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBookingTimeValidationException(BookingTimeValidationException ex) {
+        return Map.of("error", "Верните маховик времени Альбусу Дамблдору...");
+    }
 }

@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNoAccessException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
@@ -32,6 +33,9 @@ public class ItemServicePSQLImpl implements ItemService {
 
     @Override
     public ItemDto read(Long id) {
+        if (!itemDao.existsById(id)) {
+            throw new ItemNotFoundException("Ошибка при чтении item (id = " + id + ")");
+        }
         return ItemMapper.toDto(itemDao.getReferenceById(id));
     }
 
@@ -109,6 +113,9 @@ public class ItemServicePSQLImpl implements ItemService {
                 .getOwner()
                 .getId()
                 .equals(requestUserId);
+    }
+    public boolean exists(Long itemId) {
+        return itemDao.existsById(itemId);
     }
     private List<ItemDto> castItemsListToDtos(List<Item> items) {
         return items.stream().map(ItemMapper::toDto).collect(Collectors.toList());

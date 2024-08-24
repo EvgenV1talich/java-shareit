@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 @Repository
-public interface RequestDao extends JpaRepository<ItemRequest, Integer> {
+public interface RequestDao extends JpaRepository<ItemRequest, Long> {
 }
