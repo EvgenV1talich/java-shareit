@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exceptions.BookingTimeValidationException;
 import ru.practicum.shareit.exceptions.FailInputParamsException;
 import ru.practicum.shareit.exceptions.ItemNotAvailableException;
+import ru.practicum.shareit.exceptions.UserHaveNoItemsException;
 import ru.practicum.shareit.exceptions.UserNoAccessException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -78,13 +79,17 @@ public class BookingServicePSQLImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllBookingsByUser(Long id, String state) {
-        return switch (state) {
-            case "CURRENT" -> castToDtosAndSortByDate(bookingDao.findCurrentByUser(id, LocalDateTime.now()));
-            case "PAST" -> castToDtosAndSortByDate(bookingDao.findPastByUser(id, LocalDateTime.now()));
-            case "WAITING" -> castToDtosAndSortByDate(bookingDao.findWaitingByUser(id));
-            case "REJECTED" -> castToDtosAndSortByDate(bookingDao.findRejectedByUser(id));
-            default -> castToDtosAndSortByDate(bookingDao.findByBooker_Id(id));
-        };
+        if (state == null) {
+            return castToDtosAndSortByDate(bookingDao.findByBooker_Id(id));
+        } else {
+            return switch (state) {
+                case "CURRENT" -> castToDtosAndSortByDate(bookingDao.findCurrentByUser(id, LocalDateTime.now()));
+                case "PAST" -> castToDtosAndSortByDate(bookingDao.findPastByUser(id, LocalDateTime.now()));
+                case "WAITING" -> castToDtosAndSortByDate(bookingDao.findWaitingByUser(id));
+                case "REJECTED" -> castToDtosAndSortByDate(bookingDao.findRejectedByUser(id));
+                default -> castToDtosAndSortByDate(bookingDao.findByBooker_Id(id));
+            };
+        }
     }
 
     private List<BookingDto> castToDtosAndSortByDate(List<Booking> bookings) {
@@ -108,13 +113,24 @@ public class BookingServicePSQLImpl implements BookingService {
             throw new BookingTimeValidationException("Ошибка в запросе на бронирование (start time < now)");
         }
     }
-
+    private boolean checkOwnedItemsByUser(Long userId) {
+        return castToDtosAndSortByDate(bookingDao.findAllByOwner(userId)).isEmpty();
+    }
     @Override
-    public List<BookingDto> getAllBookingsByOwnerItems(Long id) {
-        //TODO Получение списка бронирований для всех вещей текущего пользователя.
-        // Эндпоинт — GET /bookings/owner?state={state}.
-        // Этот запрос имеет смысл для владельца хотя бы одной вещи.
-        // Работа параметра state аналогична его работе в getAllBookingsByUser
-        return null;
+    public List<BookingDto> getAllBookingsByOwnerItems(Long id, String state) {
+        if (checkOwnedItemsByUser(id)) {
+            throw new UserHaveNoItemsException("Ошибка при получении items by owner (user have no items)");
+        }
+        if (state == null) {
+            return castToDtosAndSortByDate(bookingDao.findByBooker_Id(id));
+        } else {
+            return switch (state) {
+                case "CURRENT" -> castToDtosAndSortByDate(bookingDao.findCurrentByOwner(id, LocalDateTime.now()));
+                case "PAST" -> castToDtosAndSortByDate(bookingDao.findPastByOwner(id, LocalDateTime.now()));
+                case "WAITING" -> castToDtosAndSortByDate(bookingDao.findWaitingByOwner(id));
+                case "REJECTED" -> castToDtosAndSortByDate(bookingDao.findRejectedByOwner(id));
+                default -> castToDtosAndSortByDate(bookingDao.findAllByOwner(id));
+            };
+        }
     }
 }

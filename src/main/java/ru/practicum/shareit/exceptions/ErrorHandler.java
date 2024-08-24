@@ -48,4 +48,10 @@ public class ErrorHandler {
     public Map<String, String> handleBookingTimeValidationException(BookingTimeValidationException ex) {
         return Map.of("error", "Верните маховик времени Альбусу Дамблдору...");
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleUserHaveNoItemsException(UserHaveNoItemsException ex) {
+        return Map.of("error", "У пользователя нет вещей во владении...");
+    }
 }
