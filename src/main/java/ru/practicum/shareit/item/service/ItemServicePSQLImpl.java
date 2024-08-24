@@ -3,12 +3,17 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNoAccessException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
-import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dao.CommentDao;
 import ru.practicum.shareit.item.dao.ItemPSQLDao;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mappers.CommentMapper;
+import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserPSQLDao;
 
@@ -23,6 +28,9 @@ public class ItemServicePSQLImpl implements ItemService {
 
     private final ItemPSQLDao itemDao;
     private final UserPSQLDao userDao;
+    private final BookingService bookingService;
+    private final CommentDao commentDao;
+    private final CommentMapper commentMapper;
 
     @Override
     public ItemDto create(ItemDto item, Long ownerId) {
@@ -114,10 +122,24 @@ public class ItemServicePSQLImpl implements ItemService {
                 .getId()
                 .equals(requestUserId);
     }
+
     public boolean exists(Long itemId) {
         return itemDao.existsById(itemId);
     }
+
     private List<ItemDto> castItemsListToDtos(List<Item> items) {
         return items.stream().map(ItemMapper::toDto).collect(Collectors.toList());
+    }
+
+    public CommentDto addComment(Long itemId, Long userId, CommentDto comment) {
+        if (!getAvailableForCommentItems(userId).contains(itemId)) {
+            throw new UserNoAccessException("Ошибка при добавлении комментария пользователем...");
+        }
+        return commentMapper.toDto(commentDao.save(commentMapper.toComment(comment)));
+    }
+
+    private List<Long> getAvailableForCommentItems(Long userId) {
+        List<BookingDto> bookingsByUser = bookingService.getAllBookingsByUser(userId, null);
+        return bookingsByUser.stream().map(BookingDto::getItemId).toList();
     }
 }

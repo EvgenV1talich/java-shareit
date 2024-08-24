@@ -3,7 +3,8 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.UserNoAccessException;
-import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dao.UserDao;
@@ -65,6 +66,11 @@ public class ItemServiceImpl implements ItemService {
         return itemDao.searchItems(request).stream()
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto addComment(Long itemId, Long userId, CommentDto comment) {
+        return null;
     }
 
     private boolean checkOwnByUser(Long requestUserId, Long itemId) {

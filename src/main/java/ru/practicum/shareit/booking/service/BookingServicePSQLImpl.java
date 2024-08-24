@@ -12,7 +12,7 @@ import ru.practicum.shareit.exceptions.FailInputParamsException;
 import ru.practicum.shareit.exceptions.ItemNotAvailableException;
 import ru.practicum.shareit.exceptions.UserHaveNoItemsException;
 import ru.practicum.shareit.exceptions.UserNoAccessException;
-import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
