@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exceptions;
+package ru.practicum.shareit.exceptions.booking;
 
 public class BookingTimeValidationException extends RuntimeException {
     public BookingTimeValidationException(String message) {

@@ -7,11 +7,11 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.exceptions.BookingTimeValidationException;
-import ru.practicum.shareit.exceptions.FailInputParamsException;
-import ru.practicum.shareit.exceptions.ItemNotAvailableException;
-import ru.practicum.shareit.exceptions.UserHaveNoItemsException;
-import ru.practicum.shareit.exceptions.UserNoAccessException;
+import ru.practicum.shareit.exceptions.booking.BookingTimeValidationException;
+import ru.practicum.shareit.exceptions.common.FailInputParamsException;
+import ru.practicum.shareit.exceptions.item.ItemNotAvailableException;
+import ru.practicum.shareit.exceptions.user.UserHaveNoItemsException;
+import ru.practicum.shareit.exceptions.user.UserNoAccessException;
 import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
@@ -35,7 +35,7 @@ public class BookingServicePSQLImpl implements BookingService {
     public BookingDto addRequest(BookingDto request, Long bookerId) {
         Item item = ItemMapper.toItem(itemService.read(request.getItemId()));
         User booker = userService.read(bookerId);
-        validateBookingTime(request);
+        //validateBookingTime(request);
         if (!item.getAvailable()) {
             throw new ItemNotAvailableException("Ошибка при запросе на бронирование недоступной вещи!");
         }
@@ -58,13 +58,24 @@ public class BookingServicePSQLImpl implements BookingService {
                 .getId())) {
             throw new UserNoAccessException("Ошибка при подтверждении запроса бронирования (нет доступа)...");
         }
-        Booking updatedBooking = bookingDao.getReferenceById(bookingId);
+        //bookingDao.getReferenceById(bookingId).getItem()
+        //TODO ебучий гибернейт не даёт доступ
+
+        Booking updatedBooking = new Booking(bookingDao.findById(bookingId).get().getId(),
+                bookingDao.findById(bookingId).get().getStart(),
+                bookingDao.findById(bookingId).get().getEnd(),
+                bookingDao.findById(bookingId).get().getItem(),
+                bookingDao.findById(bookingId).get().getBooker(),
+                bookingDao.findById(bookingId).get().getStatus());
         if (isApproved) {
             updatedBooking.setStatus(BookingStatus.APPROVED);
         } else {
             updatedBooking.setStatus(BookingStatus.REJECTED);
         }
-        return bookingMapper.toDto(bookingDao.save(updatedBooking));
+        BookingDto updatedBookingDto = bookingMapper.toDto(updatedBooking);
+        updatedBookingDto.setItemId(updatedBooking.getItem().getId());
+        bookingDao.save(updatedBooking);
+        return updatedBookingDto;
     }
 
     @Override
@@ -113,9 +124,11 @@ public class BookingServicePSQLImpl implements BookingService {
             throw new BookingTimeValidationException("Ошибка в запросе на бронирование (start time < now)");
         }
     }
+
     private boolean checkOwnedItemsByUser(Long userId) {
         return castToDtosAndSortByDate(bookingDao.findAllByOwner(userId)).isEmpty();
     }
+
     @Override
     public List<BookingDto> getAllBookingsByOwnerItems(Long id, String state) {
         if (checkOwnedItemsByUser(id)) {

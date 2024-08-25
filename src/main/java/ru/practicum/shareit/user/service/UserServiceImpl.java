@@ -2,8 +2,8 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.EmailExistsException;
-import ru.practicum.shareit.exceptions.FailInputParamsException;
+import ru.practicum.shareit.exceptions.user.EmailExistsException;
+import ru.practicum.shareit.exceptions.common.FailInputParamsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;

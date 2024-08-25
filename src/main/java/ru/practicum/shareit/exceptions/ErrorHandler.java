@@ -4,6 +4,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.exceptions.booking.BookingTimeValidationException;
+import ru.practicum.shareit.exceptions.common.FailInputParamsException;
+import ru.practicum.shareit.exceptions.item.ItemNotAvailableException;
+import ru.practicum.shareit.exceptions.item.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.user.EmailExistsException;
+import ru.practicum.shareit.exceptions.user.UserHaveNoItemsException;
+import ru.practicum.shareit.exceptions.user.UserNoAccessException;
+import ru.practicum.shareit.exceptions.user.UserNotFoundException;
 
 import java.util.Map;
 

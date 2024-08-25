@@ -3,11 +3,13 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dao.BookingDao;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.exceptions.UserNoAccessException;
-import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exceptions.item.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.user.UserNoAccessException;
+import ru.practicum.shareit.exceptions.user.UserNotFoundException;
 import ru.practicum.shareit.item.dao.CommentDao;
 import ru.practicum.shareit.item.dao.ItemPSQLDao;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -16,9 +18,12 @@ import ru.practicum.shareit.item.mappers.CommentMapper;
 import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserPSQLDao;
+import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,9 +33,10 @@ public class ItemServicePSQLImpl implements ItemService {
 
     private final ItemPSQLDao itemDao;
     private final UserPSQLDao userDao;
-    private final BookingService bookingService;
     private final CommentDao commentDao;
     private final CommentMapper commentMapper;
+    private final BookingDao bookingDao;
+    private final BookingMapper bookingMapper;
 
     @Override
     public ItemDto create(ItemDto item, Long ownerId) {
@@ -44,7 +50,11 @@ public class ItemServicePSQLImpl implements ItemService {
         if (!itemDao.existsById(id)) {
             throw new ItemNotFoundException("Ошибка при чтении item (id = " + id + ")");
         }
-        return ItemMapper.toDto(itemDao.getReferenceById(id));
+        ItemDto dto = ItemMapper.toDto(itemDao.getReferenceById(id));
+        dto.setComments(commentDao.readCommentsByItem(id)
+                .stream()
+                .map(commentMapper::toDto).collect(Collectors.toList()));
+        return dto;
     }
 
     @Override
@@ -132,14 +142,29 @@ public class ItemServicePSQLImpl implements ItemService {
     }
 
     public CommentDto addComment(Long itemId, Long userId, CommentDto comment) {
-        if (!getAvailableForCommentItems(userId).contains(itemId)) {
+        /*if (!getAvailableForCommentItems(userId).contains(itemId)) {
             throw new UserNoAccessException("Ошибка при добавлении комментария пользователем...");
-        }
+        }*/
+        //TODO change the method
+        // https://github.com/heimsfridur/java-shareit/blob/add-item-requests-and-gateway/server/src/main/java/ru/practicum/shareit/item/service/ItemServiceImpl.java
+        Optional<User> author = userDao.findById(userId);
+        Optional<Item> item = itemDao.findById(itemId);
+        List<Booking> bookingsByUser = bookingDao.findByBooker_Id(userId);
+        /*boolean commentsPermission = bookingsByUser
+                .stream()
+                .anyMatch(booking -> booking.getEnd().isBefore(LocalDateTime.now())
+                        && booking.getStatus().equals(BookingStatus.APPROVED));
+        if (!commentsPermission) {
+            throw new UserNoAccessException("Ошибка при добавлении комментария");
+        }*/
+        comment.setCreated(LocalDateTime.now());
+        comment.setAuthor(author.get());
+        comment.setItem(item.get());
         return commentMapper.toDto(commentDao.save(commentMapper.toComment(comment)));
     }
 
     private List<Long> getAvailableForCommentItems(Long userId) {
-        List<BookingDto> bookingsByUser = bookingService.getAllBookingsByUser(userId, null);
+        List<BookingDto> bookingsByUser = bookingDao.findByBooker_Id(userId).stream().map(bookingMapper::toDto).toList();
         return bookingsByUser.stream().map(BookingDto::getItemId).toList();
     }
 }
