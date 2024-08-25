@@ -35,7 +35,7 @@ public class ItemDto {
     private ItemRequest request;
     private BookingDto lastBooking;
     private BookingDto nextBooking;
-    private List<CommentDto> comments;
+    private List<CommentInItem> comments;
 
 
 }

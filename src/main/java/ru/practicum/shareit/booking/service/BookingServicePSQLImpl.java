@@ -35,7 +35,6 @@ public class BookingServicePSQLImpl implements BookingService {
     public BookingDto addRequest(BookingDto request, Long bookerId) {
         Item item = ItemMapper.toItem(itemService.read(request.getItemId()));
         User booker = userService.read(bookerId);
-        //validateBookingTime(request);
         if (!item.getAvailable()) {
             throw new ItemNotAvailableException("Ошибка при запросе на бронирование недоступной вещи!");
         }
@@ -58,8 +57,6 @@ public class BookingServicePSQLImpl implements BookingService {
                 .getId())) {
             throw new UserNoAccessException("Ошибка при подтверждении запроса бронирования (нет доступа)...");
         }
-        //bookingDao.getReferenceById(bookingId).getItem()
-        //TODO ебучий гибернейт не даёт доступ
 
         Booking updatedBooking = new Booking(bookingDao.findById(bookingId).get().getId(),
                 bookingDao.findById(bookingId).get().getStart(),
