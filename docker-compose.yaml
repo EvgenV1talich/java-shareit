@@ -1,5 +1,17 @@
 # описания сервисов (контейнеров), которые должны быть развёрнуты
 services:
+  server:
+    build: .
+    image: shareit-server
+    container_name: shareit-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
   # описание контейнера db
   db: # имя сервиса
     # образ, из которого должен быть запущен контейнер
@@ -27,4 +39,4 @@ services:
       # интервал повторов проверки
       interval: 5s
       # количество попыток
-      retries: 10 
+      retries: 10
