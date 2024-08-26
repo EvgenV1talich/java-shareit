@@ -56,12 +56,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UserNoAccessException("Ошибка при подтверждении запроса бронирования (нет доступа)...");
         }
         //TODO fix
-        Booking updatedBooking = new Booking(bookingRepository.findById(bookingId).get().getId(),
-                bookingRepository.findById(bookingId).get().getStart(),
-                bookingRepository.findById(bookingId).get().getEnd(),
-                bookingRepository.findById(bookingId).get().getItem(),
-                bookingRepository.findById(bookingId).get().getBooker(),
-                bookingRepository.findById(bookingId).get().getStatus());
+        Booking updatedBooking = bookingRepository.getReferenceById(bookingId);
         if (isApproved) {
             updatedBooking.setStatus(BookingStatus.APPROVED);
         } else {
