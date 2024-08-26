@@ -14,14 +14,14 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Repository
-public class ItemInMemoryDao implements ItemDao {
+public class ItemInMemoryRepository implements ItemRepository {
 
     private final Set<Long> indexes = new TreeSet<>();
     private Long lastAddedIndex;
     private final HashMap<Long, Item> items = new HashMap<>();
 
     @Autowired
-    public ItemInMemoryDao() {
+    public ItemInMemoryRepository() {
         lastAddedIndex = 0L;
         indexes.add(lastAddedIndex);
     }

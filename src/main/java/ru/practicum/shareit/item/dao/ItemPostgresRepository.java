@@ -9,7 +9,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 @Repository
-public interface ItemPSQLDao extends JpaRepository<Item, Long> {
+public interface ItemPostgresRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "SELECT * FROM items WHERE owner_id = :id", nativeQuery = true)
     List<Item> getAllItemsByUser(@Param(value = "id") Long userId);

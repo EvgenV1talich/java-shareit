@@ -7,7 +7,7 @@ import ru.practicum.shareit.item.model.Comment;
 
 import java.util.List;
 
-public interface CommentDao extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query(value = "SELECT * FROM comments WHERE item_id = :itemId", nativeQuery = true)
     List<Comment> readCommentsByItem(@Param("itemId") Long itemId);

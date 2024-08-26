@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface BookingDao extends JpaRepository<Booking, Long> {
+public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBooker_Id(Long bookerId);
 
     @Query(value = "SELECT * FROM bookings WHERE booker_id == :requesterId AND end_time <= :endTime", nativeQuery = true)
@@ -49,11 +49,4 @@ public interface BookingDao extends JpaRepository<Booking, Long> {
             "FROM bookings b JOIN items i ON b.item_id = i.id " +
             "WHERE i.owner_id = :userId AND end_time < :endTime", nativeQuery = true)
     List<Booking> findPastByOwner(@Param("userId") Long userId, @Param("endTime") LocalDateTime endTime);
-
-    @Query(value = "SELECT b.* " +
-            "FROM bookings b JOIN items i ON b.item_id = i.id " +
-            "WHERE i.owner_id = :userId AND start_time > :startTime", nativeQuery = true)
-    List<Booking> findFutureByOwner(@Param("userId") Long userId, @Param("startTime") LocalDateTime startTime);
-
-
 }
