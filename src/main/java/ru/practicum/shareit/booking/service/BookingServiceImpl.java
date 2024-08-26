@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.exceptions.item.ItemNotAvailableException;
 import ru.practicum.shareit.exceptions.user.UserHaveNoItemsException;
 import ru.practicum.shareit.exceptions.user.UserNoAccessException;
 import ru.practicum.shareit.item.mappers.ItemMapper;
@@ -32,6 +33,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto addRequest(BookingDto request, Long bookerId) {
         Item item = ItemMapper.toItem(itemService.read(request.getItemId()));
         User booker = userService.read(bookerId);
+        if (!item.getAvailable()) {
+            throw new ItemNotAvailableException("Ошибка при запросе на бронирование недоступной вещи!");
+        }
         //New booking creation
         Booking newBooking = new Booking();
         newBooking.setStatus(BookingStatus.WAITING);
