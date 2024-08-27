@@ -3,8 +3,8 @@ package ru.practicum.shareit.user.dao;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.exceptions.EmailExistsException;
-import ru.practicum.shareit.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.user.EmailExistsException;
+import ru.practicum.shareit.exceptions.item.ItemNotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;

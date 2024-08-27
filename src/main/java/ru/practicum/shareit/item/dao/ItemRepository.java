@@ -6,7 +6,7 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 
 
-public interface ItemDao {
+public interface ItemRepository {
 
     Item create(Item item, User owner);
 

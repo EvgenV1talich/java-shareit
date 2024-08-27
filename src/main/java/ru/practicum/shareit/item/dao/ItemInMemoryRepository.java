@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.item.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -14,14 +14,14 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Repository
-public class ItemInMemoryDao implements ItemDao {
+public class ItemInMemoryRepository implements ItemRepository {
 
     private final Set<Long> indexes = new TreeSet<>();
     private Long lastAddedIndex;
     private final HashMap<Long, Item> items = new HashMap<>();
 
     @Autowired
-    public ItemInMemoryDao() {
+    public ItemInMemoryRepository() {
         lastAddedIndex = 0L;
         indexes.add(lastAddedIndex);
     }

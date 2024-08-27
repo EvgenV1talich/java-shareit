@@ -4,6 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.exceptions.booking.BookingTimeValidationException;
+import ru.practicum.shareit.exceptions.common.FailInputParamsException;
+import ru.practicum.shareit.exceptions.item.ItemCommentNotAvailableException;
+import ru.practicum.shareit.exceptions.item.ItemNotAvailableException;
+import ru.practicum.shareit.exceptions.item.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.user.EmailExistsException;
+import ru.practicum.shareit.exceptions.user.UserHaveNoItemsException;
+import ru.practicum.shareit.exceptions.user.UserNoAccessException;
+import ru.practicum.shareit.exceptions.user.UserNotFoundException;
 
 import java.util.Map;
 
@@ -33,4 +42,36 @@ public class ErrorHandler {
     public Map<String, String> handleItemNotFoundException(ItemNotFoundException ex) {
         return Map.of("error", "Ошибка обработки полученных данных (не заполнены/заполнены с ошибками обязательные поля)");
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleUserNotFoundException(UserNotFoundException ex) {
+        return Map.of("error", "Такой пользователь не найден!");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleItemNotAvailableException(ItemNotAvailableException ex) {
+        return Map.of("error", "Эта вещь недоступна для бронирования");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBookingTimeValidationException(BookingTimeValidationException ex) {
+        return Map.of("error", "Верните маховик времени Альбусу Дамблдору...");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleUserHaveNoItemsException(UserHaveNoItemsException ex) {
+        return Map.of("error", "У пользователя нет вещей во владении...");
+    }
+
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleItemCommentNotAvailableException(ItemCommentNotAvailableException ex) {
+        return Map.of("error", "Ошибка при добавлении комментария!");
+    }
+
 }

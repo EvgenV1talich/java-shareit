@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 public class ItemRequestDto {
 
     private final String description;
-    private final User requestor;
+    private final User requester;
     private final LocalDateTime created;
 
     public static ItemRequestDto itemRequestToDto(ItemRequest itemRequest) {
         return new ItemRequestDto(itemRequest.getDescription(),
-                itemRequest.getRequestor(),
+                itemRequest.getRequester(),
                 itemRequest.getCreated());
     }
 

@@ -1,5 +1,11 @@
 package ru.practicum.shareit.user.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -10,6 +16,8 @@ import lombok.Data;
  * TODO Sprint add-controllers.
  */
 @Data
+@Entity
+@Table(name = "users")
 public class User {
 
     public User(Long id, String name, String email) {
@@ -26,10 +34,13 @@ public class User {
     public User() {
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty
     @NotNull
     @NotBlank
+    @Column(name = "user_name")
     private String name;
     @Email
     @NotEmpty

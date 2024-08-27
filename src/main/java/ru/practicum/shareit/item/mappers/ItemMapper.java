@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.mappers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
