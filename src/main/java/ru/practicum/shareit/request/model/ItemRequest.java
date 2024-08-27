@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "requests")
+//BACKUP BEFORE SPRINT 16
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
