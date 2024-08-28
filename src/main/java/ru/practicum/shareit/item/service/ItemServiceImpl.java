@@ -170,8 +170,8 @@ public class ItemServiceImpl implements ItemService {
             throw new ItemCommentNotAvailableException("Ошибка при добавлении комментария");
         }
         comment.setCreated(LocalDateTime.now());
-        comment.setAuthor(author.get());
-        comment.setItem(item.get());
+        author.ifPresent(comment::setAuthor);
+        item.ifPresent(comment::setItem);
         return commentInItemMapper
                 .toCommentItem(commentMapper.toDto(commentRepository.save(commentMapper.toComment(comment))));
     }

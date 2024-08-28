@@ -18,15 +18,11 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository repository;
     private final RequestMapper mapper;
     private final UserService userService;
-    //private final ItemPostgresRepository itemRepository;
-    //private final ItemMapper itemMapper;
-    //private final RequestWithItemsDtoMapper requestWithItemsDtoMapper;
 
     @Override
     public RequestDto addRequest(Long userId, RequestDto request) {
         request.setRequester(userService.read(userId));
         request.setCreated(LocalDateTime.now());
-        request.setItems(null);
         return mapper.toDto(repository.save(mapper.toRequest(request)));
     }
 
@@ -49,13 +45,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestDto> getAllByUser(Long userId) {
-        //List<Request> requests = repository.getAllByUser(userId);
-        //List<RequestWithAnswersDto> requestWithAnswers = new ArrayList<>(requests.size());
-        /*return repository.getAllByUser(userId)
-                .stream()
-                .map(requestWithItemsDtoMapper::toRequestWithAnswersDto).collect(Collectors.toList());*/
         return requestsToDtos(repository.getAllByUser(userId));
-
     }
 
     @Override
@@ -63,7 +53,7 @@ public class RequestServiceImpl implements RequestService {
         return requestsToDtos(repository.getAllOthers(userId));
     }
 
-    private List<RequestDto> requestsToDtos(List<Request> requests) {
+    public List<RequestDto> requestsToDtos(List<Request> requests) {
         return requests
                 .stream()
                 .map(mapper::toDto)

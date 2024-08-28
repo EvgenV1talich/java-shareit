@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * TODO Sprint add-item-requests.
@@ -18,5 +19,6 @@ public class ItemRequestDto {
     private String description;
     private User owner;
     private LocalDateTime created;
+    List<ItemDto> items;
 
 }
