@@ -1,0 +1,56 @@
+package ru.practicum.shareit.request.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.practicum.shareit.request.dao.RequestRepository;
+import ru.practicum.shareit.request.dto.RequestDto;
+import ru.practicum.shareit.request.mapper.RequestMapper;
+import ru.practicum.shareit.request.model.Request;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class RequestServiceImpl implements RequestService {
+    private final RequestRepository repository;
+    private final RequestMapper mapper;
+    @Override
+    public RequestDto addRequest(Long userId, RequestDto request) {
+        return mapper.toDto(repository.save(mapper.toRequest(request)));
+    }
+
+    @Override
+    public RequestDto getRequest(Long requestId) {
+        return mapper.toDto(repository.getReferenceById(requestId));
+    }
+
+
+    @Override
+    public RequestDto updateRequest(Long userId, Long requestId, RequestDto request) {
+        request.setId(requestId);
+        return mapper.toDto(repository.save(mapper.toRequest(request)));
+    }
+
+    @Override
+    public void deleteRequest(Long userId, Long requestId) {
+        repository.deleteById(requestId);
+    }
+
+    @Override
+    public List<RequestDto> getAllByUser(Long userId) {
+        return requestsToDtos(repository.getAllByUser(userId));
+    }
+
+    @Override
+    public List<RequestDto> getAllOthers(Long userId) {
+        return requestsToDtos(repository.getAllOthers(userId));
+    }
+
+    private List<RequestDto> requestsToDtos(List<Request> requests) {
+        return requests
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+}

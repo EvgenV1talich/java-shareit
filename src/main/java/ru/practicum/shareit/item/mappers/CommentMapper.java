@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Comment;
 
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
-    public Comment toComment(CommentDto dto);
+    Comment toComment(CommentDto dto);
 
-    public CommentDto toDto(Comment comment);
+    CommentDto toDto(Comment comment);
 }

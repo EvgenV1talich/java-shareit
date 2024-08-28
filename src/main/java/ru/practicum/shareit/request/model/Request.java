@@ -11,12 +11,11 @@ import lombok.Data;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-
 @Data
 @Entity
 @Table(name = "requests")
-//BACKUP BEFORE SPRINT 16
-public class ItemRequest {
+public class Request {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
