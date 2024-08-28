@@ -6,7 +6,9 @@ import ru.practicum.shareit.request.dao.RequestRepository;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.request.model.Request;
+import ru.practicum.shareit.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +17,16 @@ import java.util.stream.Collectors;
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository repository;
     private final RequestMapper mapper;
+    private final UserService userService;
+    //private final ItemPostgresRepository itemRepository;
+    //private final ItemMapper itemMapper;
+    //private final RequestWithItemsDtoMapper requestWithItemsDtoMapper;
+
     @Override
     public RequestDto addRequest(Long userId, RequestDto request) {
+        request.setRequester(userService.read(userId));
+        request.setCreated(LocalDateTime.now());
+        request.setItems(null);
         return mapper.toDto(repository.save(mapper.toRequest(request)));
     }
 
@@ -39,7 +49,13 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestDto> getAllByUser(Long userId) {
+        //List<Request> requests = repository.getAllByUser(userId);
+        //List<RequestWithAnswersDto> requestWithAnswers = new ArrayList<>(requests.size());
+        /*return repository.getAllByUser(userId)
+                .stream()
+                .map(requestWithItemsDtoMapper::toRequestWithAnswersDto).collect(Collectors.toList());*/
         return requestsToDtos(repository.getAllByUser(userId));
+
     }
 
     @Override

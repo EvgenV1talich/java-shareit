@@ -21,7 +21,9 @@ import ru.practicum.shareit.item.mappers.CommentInItemMapper;
 import ru.practicum.shareit.item.mappers.CommentMapper;
 import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dao.UserPSQLDao;
+import ru.practicum.shareit.request.mapper.RequestMapper;
+import ru.practicum.shareit.request.service.RequestService;
+import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -36,27 +38,29 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemPostgresRepository itemDao;
-    private final UserPSQLDao userDao;
+    private final UserRepository userDao;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final CommentInItemMapper commentInItemMapper;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private final RequestService requestService;
+    private final RequestMapper requestMapper;
+    private final ItemMapper itemMapper;
 
     @Override
     public ItemDto create(ItemDto item, Long ownerId) {
         if (!userDao.existsById(ownerId)) throw new UserNotFoundException("Такого пользователя не существует!");
         item.setOwner(userDao.getReferenceById(ownerId));
-        return ItemMapper.toDto(itemDao.save(ItemMapper.toItem(item)));
+        return itemMapper.toDto(itemDao.save(itemMapper.toItem(item)));
     }
-
     @Override
     public ItemDto read(Long id) {
         if (!itemDao.existsById(id)) {
             throw new ItemNotFoundException("Ошибка при чтении item (id = " + id + ")");
         }
 
-        ItemDto dto = ItemMapper.toDto(itemDao.getReferenceById(id));
+        ItemDto dto = itemMapper.toDto(itemDao.getReferenceById(id));
         dto.setComments(commentRepository.readCommentsByItem(id)
                 .stream()
                 .map(commentMapper::toDto)
@@ -72,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
         boolean isNewName = item.getName() != null;
         boolean isNewDescription = item.getDescription() != null;
         boolean isNewAvailable = item.getAvailable() != null;
-        boolean isNewRequest = item.getRequest() != null;
+        boolean isNewRequest = item.getRequestId() != null;
         boolean isNewOwner = item.getOwner() != null;
 
         Item oldItem = itemDao.getReferenceById(id);
@@ -99,7 +103,7 @@ public class ItemServiceImpl implements ItemService {
         }
         //Request update
         if (isNewRequest) {
-            itemToUpdate.setRequest(item.getRequest());
+            itemToUpdate.setRequest(requestMapper.toRequest(requestService.getRequest(item.getRequestId())));
         } else {
             itemToUpdate.setRequest(oldItem.getRequest());
         }
@@ -109,7 +113,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             itemToUpdate.setOwner(oldItem.getOwner());
         }
-        return ItemMapper.toDto(itemDao.save(itemToUpdate));
+        return itemMapper.toDto(itemDao.save(itemToUpdate));
     }
 
     @Override
@@ -134,6 +138,11 @@ public class ItemServiceImpl implements ItemService {
         return castItemsListToDtos(itemDao.searchItems(toLower));
     }
 
+    @Override
+    public List<ItemDto> getItemsByRequest(Long requestId) {
+        return castItemsListToDtos(itemDao.getAllItemsByRequest(requestId));
+    }
+
     private boolean checkOwnByUser(Long requestUserId, Long itemId) {
         return itemDao.getReferenceById(itemId)
                 .getOwner()
@@ -146,7 +155,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private List<ItemDto> castItemsListToDtos(List<Item> items) {
-        return items.stream().map(ItemMapper::toDto).collect(Collectors.toList());
+        return items.stream().map(itemMapper::toDto).collect(Collectors.toList());
     }
 
     public CommentInItem addComment(Long itemId, Long userId, CommentDto comment) {

@@ -28,10 +28,11 @@ public class BookingServiceImpl implements BookingService {
     private final UserService userService;
     private final ItemService itemService;
     private final BookingMapper bookingMapper;
+    private final ItemMapper itemMapper;
 
     @Override
     public BookingDto addRequest(BookingDto request, Long bookerId) {
-        Item item = ItemMapper.toItem(itemService.read(request.getItemId()));
+        Item item = itemMapper.toItem(itemService.read(request.getItemId()));
         User booker = userService.read(bookerId);
         if (!item.getAvailable()) {
             throw new ItemNotAvailableException("Ошибка при запросе на бронирование недоступной вещи!");

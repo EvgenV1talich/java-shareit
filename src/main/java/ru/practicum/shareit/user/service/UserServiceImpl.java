@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.user.EmailExistsException;
 import ru.practicum.shareit.exceptions.user.UserNotFoundException;
-import ru.practicum.shareit.user.dao.UserPSQLDao;
+import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -17,7 +17,7 @@ import java.util.List;
 @Primary
 public class UserServiceImpl implements UserService {
 
-    private final UserPSQLDao dao;
+    private final UserRepository dao;
 
     @Override
     public User create(UserDto user) {
