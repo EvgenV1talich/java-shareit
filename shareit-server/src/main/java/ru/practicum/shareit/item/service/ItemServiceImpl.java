@@ -54,6 +54,7 @@ public class ItemServiceImpl implements ItemService {
         item.setOwner(userDao.getReferenceById(ownerId));
         return itemMapper.toDto(itemDao.save(itemMapper.toItem(item)));
     }
+
     @Override
     public ItemDto read(Long id) {
         if (!itemDao.existsById(id)) {

@@ -15,6 +15,7 @@ public class ItemMapper {
 
     private final RequestService requestService;
     private final RequestMapper requestMapper;
+
     public ItemDto toDto(Item item) {
         if (item == null) {
             throw new ResponseStatusException(HttpStatus.valueOf(500));
