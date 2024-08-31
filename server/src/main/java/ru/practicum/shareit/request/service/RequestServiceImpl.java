@@ -21,7 +21,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto addRequest(Long userId, RequestDto request) {
-        request.setRequester(userService.read(userId));
+        request.setRequester(userService.read(userId).getId());
         request.setCreated(LocalDateTime.now());
         return mapper.toDto(repository.save(mapper.toRequest(request)));
     }

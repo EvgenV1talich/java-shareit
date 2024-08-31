@@ -26,10 +26,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public RequestDto addRequest(Long userId, RequestDto request) {
-        request.setRequester(userService.read(userId));
+        request.setRequester(userService.read(userId).getId());
         request.setCreated(LocalDateTime.now());
         request.setItems(itemService.getItemsByRequest(request.getId()));
-        return requestMapper.toDto(requestRepository.save(requestMapper.toRequest(request)));
+        return requestMapper.toDtoWithItems(requestRepository.save(requestMapper.toRequest(request)),
+                request.getItems(),
+                request.getRequester());
     }
 
     @Override
