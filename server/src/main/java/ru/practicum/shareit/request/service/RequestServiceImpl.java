@@ -45,12 +45,12 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestDto> getAllByUser(Long userId) {
-        return requestsToDtos(repository.getAllByUser(userId));
+        return requestsToDtos(repository.findAllByRequesterIdOrderByCreatedDesc(userId));
     }
 
     @Override
     public List<RequestDto> getAllOthers(Long userId) {
-        return requestsToDtos(repository.getAllOthers(userId));
+        return requestsToDtos(repository.findAllByRequesterIdNotOrderByCreatedDesc(userId));
     }
 
     public List<RequestDto> requestsToDtos(List<Request> requests) {

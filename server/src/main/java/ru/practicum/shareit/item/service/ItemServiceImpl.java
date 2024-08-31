@@ -62,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         ItemDto dto = itemMapper.toDto(itemDao.getReferenceById(id));
-        dto.setComments(commentRepository.readCommentsByItem(id)
+        dto.setComments(commentRepository.findAllByItemId(id)
                 .stream()
                 .map(commentMapper::toDto)
                 .map(commentInItemMapper::toCommentItem)
@@ -129,7 +129,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> readByUser(Long userId) {
-        return castItemsListToDtos(itemDao.getAllItemsByUser(userId));
+        return castItemsListToDtos(itemDao.findByOwnerId(userId));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsByRequest(Long requestId) {
-        return castItemsListToDtos(itemDao.getAllItemsByRequest(requestId));
+        return castItemsListToDtos(itemDao.findByRequestId(requestId));
     }
 
     private boolean checkOwnByUser(Long requestUserId, Long itemId) {

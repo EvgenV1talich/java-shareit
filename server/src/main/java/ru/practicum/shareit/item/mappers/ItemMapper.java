@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item.mappers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.mapper.RequestMapper;
@@ -18,7 +16,7 @@ public class ItemMapper {
 
     public ItemDto toDto(Item item) {
         if (item == null) {
-            throw new ResponseStatusException(HttpStatus.valueOf(500));
+            return null;
         }
         ItemDto dto = new ItemDto();
         dto.setId(item.getId());
@@ -34,7 +32,7 @@ public class ItemMapper {
 
     public Item toItem(ItemDto dto) {
         if (dto == null) {
-            throw new ResponseStatusException(HttpStatus.valueOf(500));
+            return null;
         }
         Item item = new Item();
         item.setId(dto.getId());

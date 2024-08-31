@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
-import ru.practicum.shareit.request.service.RequestService;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestController {
 
-    private final RequestService service;
     private final ItemRequestService itemRequestService;
 
     @PostMapping

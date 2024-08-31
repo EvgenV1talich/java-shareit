@@ -36,7 +36,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<RequestDto> getMyRequestWithItems(Long userId) {
-        List<RequestDto> requests = requestRepository.getAllByUser(userId).stream().map(requestMapper::toDto).toList();
+        List<RequestDto> requests = requestRepository.findAllByRequesterIdOrderByCreatedDesc(userId).stream().map(requestMapper::toDto).toList();
         return requests.stream().peek(requestDto -> {
             List<ItemDto> items = itemService.getItemsByRequest(requestDto.getId());
             requestDto.setItems(items);
@@ -45,7 +45,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<RequestDto> getOtherRequestsWithItems(Long userId) {
-        List<RequestDto> requests = requestRepository.getAllOthers(userId).stream().map(requestMapper::toDto).toList();
+        List<RequestDto> requests = requestRepository.findAllByRequesterIdNotOrderByCreatedDesc(userId).stream().map(requestMapper::toDto).toList();
         return requests.stream().peek(requestDto -> {
             List<ItemDto> items = itemService.getItemsByRequest(requestDto.getId());
             requestDto.setItems(items);
