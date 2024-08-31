@@ -31,6 +31,7 @@ public class RequestMapper {
                 request.getDescription(),
                 request.getRequester().getId(), null, null);
     }
+
     public RequestDto toDtoWithItems(Request request, List<ItemDto> items, Long ownerId) {
         return new RequestDto(request.getId(),
                 request.getCreated(),
